@@ -1,6 +1,6 @@
 import { TodoProvider } from '../Providers/TodoProvider';
 import { Todo } from '../Models/Todo';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 export class TodoBloc {
 
@@ -11,7 +11,7 @@ export class TodoBloc {
 
     public loadTodos = async (): Promise<void> => {
         const todos = await this.provider.getTodos();
-        // this.todosStreamController.next(todos);
+        this.todosStreamController.next(todos);
     }
 
     public addTodo = () => {

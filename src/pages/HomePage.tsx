@@ -1,7 +1,7 @@
-import React, { Component, useContext } from 'react'
+import React, { useContext } from 'react'
 import { Todo } from '../Models/Todo';
 import { StreamBuilder, Snapshot, ConnectionState } from 'react-stream-builder'
-import { TodoContext } from '../App';
+import { BlocsContext } from '../store/Context';
 
 
 interface FromProps {
@@ -14,14 +14,14 @@ interface FromState {
 
 const HomePage = ({ title }: FromProps) => {
 
-    const context = useContext(TodoContext);
-    context.loadTodos();
+    const { todoBloc } = useContext(BlocsContext);
+    todoBloc.loadTodos()
     return (
         <div>
             <h1>{title}</h1>
-            <button onClick = {() => context.addTodo() } >Nuevo</button>
+            <button onClick={() => todoBloc.addTodo()} >Nuevo</button>
             <StreamBuilder
-                stream={context.todoStrem()}
+                stream={todoBloc.todoStrem()}
                 builder={(snapshot: Snapshot<Todo[]>) => {
                     // If the observable has not yet emitted any values print a message
                     // indicating that we're still waiting.
