@@ -1,25 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, createContext, useContext, useEffect } from 'react';
+import HomePage from './pages/HomePage';
+import { TodoBloc } from './store/TodoBloc';
 
-const App: React.FC = () => {
+
+
+const todoBloc: TodoBloc = new TodoBloc();
+export const TodoContext = createContext(todoBloc);
+
+
+const App: FC = () => {
+
+  const context = useContext(TodoContext);
+  useEffect(() => {
+    return context.dispose;
+  }, [context]);
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <TodoContext.Provider value={ context }>
+      <div className="App"> 
+        <HomePage title= "Titulo" />
+      </div>
+    </TodoContext.Provider>
   );
 }
 
