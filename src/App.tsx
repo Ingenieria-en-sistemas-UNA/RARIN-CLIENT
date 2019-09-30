@@ -1,26 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, useContext } from 'react';
+import { AppRoutes } from './routes/index';
+import { Router } from 'react-router';
+import { createBrowserHistory } from 'history';
+import { BlocsContext } from './store/Context';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const history = createBrowserHistory();
+
+const App: FC = () =>{
+  
+  const { authBloc } = useContext(BlocsContext);
+  authBloc.load();
+  return <Router history={history}>
+    <AppRoutes />
+  </Router>
 }
+  
+
 
 export default App;
