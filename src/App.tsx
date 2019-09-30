@@ -1,13 +1,20 @@
-import React, { FC } from 'react';
-import HomePage from './pages/HomePage';
+import React, { FC, useContext } from 'react';
+import { AppRoutes } from './routes/index';
+import { Router } from 'react-router';
+import { createBrowserHistory } from 'history';
+import { BlocsContext } from './store/Context';
 
-const App: FC = () => {
+const history = createBrowserHistory();
 
-  return (
-      <div className="App"> 
-        <HomePage title= "Titulo" />
-      </div>
-  );
+const App: FC = () =>{
+  
+  const { authBloc } = useContext(BlocsContext);
+  authBloc.load();
+  return <Router history={history}>
+    <AppRoutes />
+  </Router>
 }
+  
+
 
 export default App;

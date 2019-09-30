@@ -15,15 +15,14 @@ export class TodoBloc {
     }
 
     public addTodo = () => {
-        const todos = this.todosStreamController.value;
+        const todos = this.todosStreamController.getValue();
         const todo: Todo = {
             completed: false,
             id:200,
             title: "Nuevo",
             userId: 2
         }
-        todos.push(todo);
-        this.todosStreamController.next(todos);
+        todos.push(todo);    
     }
     
     public dispose = () => this.todosStreamController.complete();

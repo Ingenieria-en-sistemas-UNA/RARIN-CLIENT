@@ -1,15 +1,11 @@
-import React, { useContext } from 'react'
+import React, { useContext } from 'react' 
 import { Todo } from '../Models/Todo';
-import { StreamBuilder, Snapshot, ConnectionState } from 'react-stream-builder'
 import { BlocsContext } from '../store/Context';
-
+import { StreamBuilder, Snapshot } from '../utils/BlocBuilder';
 
 interface FromProps {
     title: string,
 
-}
-
-interface FromState {
 }
 
 const HomePage = ({ title }: FromProps) => {
@@ -21,17 +17,18 @@ const HomePage = ({ title }: FromProps) => {
             <h1>{title}</h1>
             <button onClick={() => todoBloc.addTodo()} >Nuevo</button>
             <StreamBuilder
-                stream={todoBloc.todoStrem()}
-                builder={(snapshot: Snapshot<Todo[]>) => {
-                    // If the observable has not yet emitted any values print a message
-                    // indicating that we're still waiting.
-                    if (snapshot.state !== ConnectionState.active) {
-                        return "Loading...";
+                stream = { todoBloc.todoStrem() }
+                builder = {(snapshot: Snapshot<Todo[]>)=> {
+                    if(snapshot.hasError){
+                        alert(snapshot.error);
                     }
-                    return snapshot.data.map((todo, i) => <li key={i} >{todo.title}</li>)
+                    if(snapshot.hasData){
+                        let todos: Todo[] = snapshot.data || [];
+                        return todos.map((todo, i) => <li key={i} >{todo.title}</li>)
+                    }
+                    return "Loading...";
                 }}
-
-            />
+            /> 
         </div>
     );
 

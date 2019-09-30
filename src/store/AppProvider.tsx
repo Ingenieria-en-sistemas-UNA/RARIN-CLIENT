@@ -5,7 +5,7 @@ interface FromProps {
     children: ReactNode
 }
 
-const ProviderComponent: FC<FromProps> = ({ children }: FromProps) => {
+const AppProvider: FC<FromProps> = ({ children }: FromProps) => {
 
     const context = useContext(BlocsContext);
     return (
@@ -18,4 +18,4 @@ const ProviderComponent: FC<FromProps> = ({ children }: FromProps) => {
 
 }
 
-export default ProviderComponent
+export default AppProvider
