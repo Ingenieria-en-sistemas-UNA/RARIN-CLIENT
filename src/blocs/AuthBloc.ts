@@ -1,45 +1,57 @@
 import { BehaviorSubject } from 'rxjs';
 import { AuthProvider } from '../Providers/AuthProvider';
-import { Person } from '../Models/Person';
+import { User } from '../Models/User';
 
 export class AuthBloc {
 
     private provider: AuthProvider = new AuthProvider()
     private sesionStateController = new BehaviorSubject<Boolean>(false);
-    private userPersonController = new BehaviorSubject<Person | null>(null);
+    private userUserController = new BehaviorSubject<User | null>(null);
 
 
     public sesionStateStream = () => this.sesionStateController.asObservable()
-    public userPersonStateStrem = () => this.userPersonController.asObservable()
+    public userUserStateStrem = () => this.userUserController.asObservable()
 
     public load = () => {
-        const person: Person | null = this.provider.getPerson();
-        if (this.provider.loggedIn() && person != null) {
+        const User: User | null = this.provider.getUser();
+        if (this.provider.loggedIn() && User != null) {
             this.sesionStateController.next(true);
-            this.userPersonController.next(person);
+            this.userUserController.next(User);
         }
     }
 
     public login = async (email: string, password: string): Promise<void> => {
-        const user: Person | null = await this.provider.login(email, password);
+        const user: User | null = await this.provider.login(email, password);
         if (user != null) {
             this.sesionStateController.next(true);
-            this.userPersonController.next(user);
+            this.userUserController.next(user);
         } else {
             this.sesionStateController.next(false);
-            this.userPersonController.next(null);
+            this.userUserController.next(null);
         }
+    }
+
+    public isLoggedin = (): boolean => {
+        return this.provider.loggedIn();
+    }
+
+    public isAdmin = () : boolean => {
+        const user: User | null = this.userUserController.value;
+        if(user){
+            return user.role === "Admin";
+        }
+        return false;
     }
 
     public logout = async () => {
         this.provider.logout();
         this.sesionStateController.next(false);
-        this.userPersonController.next(null);
+        this.userUserController.next(null);
     }
 
     public dispose = () => {
         this.sesionStateController.complete();
-        this.userPersonController.complete();
+        this.userUserController.complete();
     }
 
 }

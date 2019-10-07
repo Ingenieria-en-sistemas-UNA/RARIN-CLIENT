@@ -7,9 +7,9 @@ import InputBase from '@material-ui/core/InputBase';
 import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import Cards from '../components/container/Cards/components/Cards'
+import Card from '../components/items/card'
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8]
+const cards = [1]
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -66,7 +66,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export function HomePage() {
+const HomePage = () => {
+  
   const classes = useStyles();
 
   return (
@@ -99,9 +100,11 @@ export function HomePage() {
           </div>
         </Toolbar>
       </AppBar>
-      <Cards
 
-/>    </div>
+      {
+        cards.map((value: number, index: number) => <Card key={index} />)
+      }
+    </div>
   );
 }
 

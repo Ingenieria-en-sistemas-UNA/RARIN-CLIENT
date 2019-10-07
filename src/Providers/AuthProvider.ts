@@ -1,11 +1,11 @@
 import decode from 'jwt-decode'
 import { BaseProvider } from './BaseProvider';
-import { Person, Convert } from '../Models/Person';
+import { User, Convert } from '../Models/User';
 
 export class AuthProvider extends BaseProvider {
 
     
-    login = async(email: string, password: string) : Promise<Person | null> => {
+    login = async(email: string, password: string) : Promise<User | null> => {
         try {
             const response: Response = await fetch(`${this._baseUrl}/api/users/login`, {
                 headers: {
@@ -18,10 +18,10 @@ export class AuthProvider extends BaseProvider {
 
             if(response.status >= 200 && response.status < 300){
                 const json: any = await response.json();
-                const person: Person = json.data.person; 
-                this.setPerson(person);
                 this.setToken(json.data.token);
-                return person;
+                const user: User = { ...json.data.person, role: this.getRole() }; 
+                this.setUser(user);
+                return user;
             }
             throw new Error('Erro API');
         } catch (error) {
@@ -30,13 +30,21 @@ export class AuthProvider extends BaseProvider {
     }
 
 
-    setPerson = ( person: Person): void => localStorage.setItem('person', Convert.personToJson(person));
+    setUser = ( User: User): void => localStorage.setItem('User', Convert.UserToJson(User));
 
-    getPerson = (): Person | null => {
-        const personString = localStorage.getItem('person') || '';
-        if(personString !== ''){
-            const person: Person = Convert.toPerson(personString);
-            return person;
+    getUser = (): User | null => {
+        const userString = localStorage.getItem('User') || '';
+        if(userString !== ''){
+            const user: User = Convert.toUser(userString);
+            return user;
+        }
+        return null;
+    }
+
+    getRole = () : string | null  => {
+        if(this.loggedIn()){
+            const { role } = decode(this.getToken());
+            return role;
         }
         return null;
     }
@@ -47,7 +55,7 @@ export class AuthProvider extends BaseProvider {
 
     logout = (): void => {
         localStorage.removeItem('id_token');
-        localStorage.removeItem('person');
+        localStorage.removeItem('User');
     }
 
     loggedIn = (): boolean => {
@@ -66,17 +74,6 @@ export class AuthProvider extends BaseProvider {
         }
         catch (err) {
             return false
-        }
-    }
-    _checkStatus = (response: Response) => {
-        if (response.status >= 200 && response.status < 300) {
-            return response
-        } else {
-            return response.json().then((json) => {
-                let error: any = new Error(json.message || response.statusText)
-                error.response = response
-                throw error
-            })
         }
     }
 

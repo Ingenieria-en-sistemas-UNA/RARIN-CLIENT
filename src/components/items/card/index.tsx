@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
+import { Card as CardMaterial } from '@material-ui/core';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -17,11 +17,11 @@ const useStyles = makeStyles({
   },
 });
 
-const FirstCard = () => {
+const Card = () => {
   const classes = useStyles();
 
   return (
-    <Card className={classes.card}>
+    <CardMaterial className={classes.card}>
       <CardActionArea>
         <CardMedia
           className={classes.media}
@@ -30,10 +30,10 @@ const FirstCard = () => {
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-             Ricardo Morataya
+            Ricardo Morataya
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-           Ricardo Morataya es un joven amante de los penes
+            Ricardo Morataya es un joven amante de los penes
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -45,8 +45,8 @@ const FirstCard = () => {
           Learn More
         </Button>
       </CardActions>
-    </Card>
-    
+    </CardMaterial>
+
   );
 }
-export default FirstCard;
+export default Card;
