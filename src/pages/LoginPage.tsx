@@ -39,12 +39,18 @@ interface FromProps {
 }
 const LoginPage: FC<FromProps> = ({ history }) => {
 
+
+    
+
     const classes = useStyles();
+    const { authBloc } = useContext(BlocsContext);
+    if(authBloc.isLoggedin()){
+        history.push('/')
+    }
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState({});
     const [password, setPassword] = useState('');
 
-    const { authBloc } = useContext(BlocsContext);
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const sinErrors = { email, password };

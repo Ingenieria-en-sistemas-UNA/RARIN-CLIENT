@@ -1,20 +1,18 @@
-import React, { useContext } from 'react' 
-import { Todo } from '../Models/Todo';
-import { BlocsContext } from '../store/Context';
-import { StreamBuilder, Snapshot } from '../utils/BlocBuilder';
+import React, { FC } from 'react';
+import Card from '../components/items/card'
 
-interface FromProps {
-    title: string,
+const cards = [1]
 
-}
 
-const HomePage = ({ title }: FromProps) => {
-    return (
-        <div>
-            <h1>{title}</h1> 
-        </div>
-    );
-
+const HomePage: FC = () => {
+  
+  return (
+    <div>
+      {
+        cards.map((value: number, index: number) => <Card key={index} />)
+      }
+    </div>
+  );
 }
 
 export default HomePage;
