@@ -1,0 +1,36 @@
+import React, { FC } from 'react';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import {AppBar as AppBarMaterial} from '@material-ui/core';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+    title: {
+      flexGrow: 1,
+    },
+  }),
+);
+
+export const AppBar: FC = () => {
+  const classes = useStyles();
+  return (
+      <AppBarMaterial position="static">
+        <Toolbar>
+          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" className={classes.title}>
+            RARIN TECHNOLOGIES
+          </Typography>
+          <Button color="inherit">Login</Button>
+        </Toolbar>
+      </AppBarMaterial>
+  );
+}
