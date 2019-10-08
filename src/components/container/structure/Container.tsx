@@ -1,5 +1,6 @@
 import React, { FC, ReactNode } from 'react';
 import Container from '@material-ui/core/Container';
+import { Grid } from '@material-ui/core';
 
 interface FromProps {
     children: ReactNode
@@ -7,7 +8,7 @@ interface FromProps {
 
 export const AppContainer: FC<FromProps> = ({ children }) => {
     return (
-        <Container fixed component="main" maxWidth="xs">
+        <Container fixed component="main" maxWidth="lg">
             {
                 children
             }
