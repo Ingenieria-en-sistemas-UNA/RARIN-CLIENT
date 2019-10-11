@@ -7,7 +7,7 @@ export class AuthProvider extends BaseProvider {
     
     login = async(email: string, password: string) : Promise<User | null> => {
         try {
-            const response: Response = await fetch(`${this._baseUrl}/api/users/login`, {
+            const response: Response = await fetch(`${this._baseUrlApi}/api/users/login`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'

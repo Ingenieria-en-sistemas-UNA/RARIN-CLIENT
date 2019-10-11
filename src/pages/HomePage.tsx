@@ -6,9 +6,8 @@ const cards = [1, 2, 3, 4]
 
 
 const HomePage: FC = () => {
-  
   return (
-    <Grid container justify='space-around' direction='row' wrap='wrap' style={{ display: 'flex', alignItems: 'flex-start' }} xs={12} >
+    <Grid container justify='space-around' direction='row' wrap='wrap' style={{ display: 'flex', alignItems: 'flex-start' }}>
       {
         cards.map((value: number, index: number) => <Card key={index} />)
       }

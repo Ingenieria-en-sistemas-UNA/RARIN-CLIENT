@@ -30,7 +30,7 @@ class App extends Component<any, any> {
           state = false;
         }
         return <Router history={history}>
-          <AppRoutes sesionState={state}/>
+          <AppRoutes sesionState={state} history={history}/>
         </Router>
       }}
     />

@@ -45,7 +45,7 @@ const LoginPage: FC<FromProps> = ({ history }) => {
     const classes = useStyles();
     const { authBloc } = useContext(BlocsContext);
     if(authBloc.isLoggedin()){
-        history.push('/')
+        history.push(localStorage.getItem('route') || '/')
     }
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState({});

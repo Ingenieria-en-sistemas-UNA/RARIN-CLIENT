@@ -8,6 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
+import { History } from 'history';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -68,11 +69,15 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 interface FromProps {
-  sesionState: boolean
+  sesionState: boolean,
+  history: History
 }
 
-export const AppBar: FC<FromProps> = ({ sesionState }) => {
+export const AppBar: FC<FromProps> = ({ sesionState, history }) => {
   const classes = useStyles();
+  const onGoDashboar = () => {
+    history.push('/dashboard')
+  }
   return (
     <AppBarMaterial position="static">
       <Toolbar>
@@ -108,6 +113,7 @@ export const AppBar: FC<FromProps> = ({ sesionState }) => {
           ) : <Button color="inherit">Login</Button>
 
         }
+        <Button onClick={() => onGoDashboar()}>Dashboard</Button>
       </Toolbar>
     </AppBarMaterial>
   );
