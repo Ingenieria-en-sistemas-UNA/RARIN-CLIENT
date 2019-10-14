@@ -4,10 +4,13 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import AppProvider from './store/AppProvider';
+import Theme from './assets/theme';
 
 const app = (
     <AppProvider>
-        <App />
+        <Theme>
+            <App />
+        </Theme>
     </AppProvider>
 )
 

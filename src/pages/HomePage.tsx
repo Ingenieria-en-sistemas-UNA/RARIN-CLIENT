@@ -6,6 +6,7 @@ const cards = [1, 2, 3, 4]
 
 
 const HomePage: FC = () => {
+  localStorage.setItem('route', '/home');
   return (
     <Grid container justify='space-around' direction='row' wrap='wrap' style={{ display: 'flex', alignItems: 'flex-start' }}>
       {

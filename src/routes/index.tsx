@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { Layout } from '../components/container/layout';
 import HomePage from '../pages/HomePage';
 import Login from '../pages/LoginPage';
@@ -18,5 +18,6 @@ export const AppRoutes: FC<FromProps> = ({ sesionState, history }) =>
             <PrivateRoute exact path="/" state={sesionState} component={HomePage} />
             <PrivateRoute exact path="/dashboard" state={sesionState} component={Dashboard} />
             <Route exact path="/login" component={Login} />
+            <Redirect to='/'/>
         </Switch>
     </Layout>

@@ -9,20 +9,43 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import { History } from 'history';
+import clsx from 'clsx';
 
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    appBar: {
+      zIndex: theme.zIndex.drawer + 1,
+      transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+    },
+    appBarShift: {
+      marginLeft: 240,
+      width: `calc(100% - ${240}px)`,
+      transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    menuButton: {
+      marginRight: 36,
+    },
+    menuButtonHidden: {
+      display: 'none',
+    },
     root: {
       flexGrow: 1,
     },
-    menuButton: {
-      marginRight: theme.spacing(2),
-      width: 'auto',
-    },
+    // menuButton: {
+    //   marginRight: theme.spacing(2),
+    //   width: 'auto',
+    // },
     title: {
       flexGrow: 1,
       display: 'none',
+      color: theme.palette.secondary.main,
       [theme.breakpoints.up('sm')]: {
         display: 'block',
       },
@@ -70,26 +93,30 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface FromProps {
   sesionState: boolean,
-  history: History
+  history: History,
+  open: boolean,
+  handleDrawer: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-export const AppBar: FC<FromProps> = ({ sesionState, history }) => {
+export const AppBar: FC<FromProps> = ({ sesionState, open, handleDrawer, history }) => {
   const classes = useStyles();
-  const onGoDashboar = () => {
-    history.push('/dashboard')
-  }
   return (
-    <AppBarMaterial position="static">
+    <AppBarMaterial position="fixed" className={clsx(classes.appBar, open && classes.appBarShift)}>
       <Toolbar>
-        <IconButton
-          edge="start"
-          className={classes.menuButton}
-          color="inherit"
-          aria-label="open drawer"
-        >
-          <MenuIcon />
-        </IconButton>
-        <Typography className={classes.title} variant="h6" noWrap>
+        {
+          sesionState && (
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={() => handleDrawer(true)}
+              className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+            >
+              <MenuIcon />
+            </IconButton>
+          )
+        }
+        <Typography className={classes.title} variant="h6" noWrap onClick={() => history.push('/')}>
           RARIN TECHNOLOGIES
         </Typography>
         {
@@ -108,12 +135,11 @@ export const AppBar: FC<FromProps> = ({ sesionState, history }) => {
                   inputProps={{ 'aria-label': 'search' }}
                 />
               </div>
-              
+
             </>
           ) : <Button color="inherit">Login</Button>
 
         }
-        <Button onClick={() => onGoDashboar()}>Dashboard</Button>
       </Toolbar>
     </AppBarMaterial>
   );
