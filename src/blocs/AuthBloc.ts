@@ -5,7 +5,7 @@ import { User } from '../Models/User';
 export class AuthBloc {
 
     private provider: AuthProvider = new AuthProvider()
-    private sesionStateController = new BehaviorSubject<Boolean>(false);
+    private sesionStateController = new BehaviorSubject<boolean>(false);
     private userUserController = new BehaviorSubject<User | null>(null);
 
 

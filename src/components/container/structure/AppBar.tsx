@@ -10,7 +10,6 @@ import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import { BlocsContext } from '../../../store/Context';
 import { StreamBuilder, Snapshot } from '../../../utils/BlocBuilder';
-import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -70,7 +69,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-export const AppBar: FC = () => {
+
+
+interface FromProps {
+  sesionState: boolean
+}
+
+export const AppBar: FC<FromProps> = ({ sesionState }) => {
   const classes = useStyles();
   const { authBloc } = useContext(BlocsContext);
   const [auth, setAuth] = React.useState(true);
@@ -88,6 +93,11 @@ export const AppBar: FC = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const onClickLogout = () =>{
+        
+  };
+  
   return (
     <AppBarMaterial position="static">
       <Toolbar>
@@ -103,28 +113,22 @@ export const AppBar: FC = () => {
           RARIN TECHNOLOGIES
         </Typography>
         {
-
-        }
-        <StreamBuilder
-          stream={authBloc.sesionStateStream()}
-          builder={(snapshot: Snapshot<Boolean>) => {
-              const state: Boolean | undefined = snapshot.data;
-              return state ? (
-                <>
-                  <div className={classes.search}>
-                    <div className={classes.searchIcon}>
-                      <SearchIcon />
-                    </div>
-                    <InputBase
-                      placeholder="Buscar…"
-                      classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput,
-                      }}
-                      inputProps={{ 'aria-label': 'search' }}
-                    />
-                  </div>
-                  <div>
+          sesionState ? (
+            <>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  placeholder="Buscar…"
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </div>
+              <div>
                   <IconButton
                     aria-label="account of current user"
                     aria-controls="menu-appbar"
@@ -159,12 +163,9 @@ export const AppBar: FC = () => {
                   
                 </>
               ) : <Button color="inherit">Login</Button>
-            }
-          }
-        />
 
+        }
       </Toolbar>
     </AppBarMaterial>
   );
 }
-

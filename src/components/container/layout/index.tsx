@@ -12,15 +12,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 interface FromProps {
-    children: ReactNode
+    children: ReactNode,
+    sesionState: boolean
 }
 
-export const Layout: FC<FromProps> = ({children}) => {
+export const Layout: FC<FromProps> = ({ children, sesionState }) => {
     const classes = useStyles();
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <AppBar />  
+            <AppBar sesionState={sesionState} />  
             <AppContainer>
                 {
                     children
