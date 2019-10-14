@@ -1,4 +1,4 @@
-import React, { FC, useContext, Component } from 'react';
+import React, { Component } from 'react';
 import { AppRoutes } from './routes/index';
 import { Router } from 'react-router';
 import { createBrowserHistory } from 'history';
@@ -9,10 +9,6 @@ const history = createBrowserHistory();
 
 class App extends Component<any, any> {
   static contextType = BlocsContext;
-
-  constructor(props: any) {
-    super(props);
-  }
 
   async componentWillMount() {
     const { authBloc } = this.context;
@@ -26,7 +22,7 @@ class App extends Component<any, any> {
       stream={authBloc.sesionStateStream()}
       builder={(snapshot: Snapshot<boolean>) => {
         let state: boolean | undefined = snapshot.data;
-        if(state == undefined){
+        if(state === undefined){
           state = false;
         }
         return <Router history={history}>

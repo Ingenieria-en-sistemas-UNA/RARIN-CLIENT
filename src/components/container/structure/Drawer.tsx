@@ -1,4 +1,4 @@
-import React, { FC, Component } from 'react'
+import React, { FC } from 'react'
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Drawer as DrawerMaterial, IconButton, Divider, List, ListItem, ListItemIcon } from '@material-ui/core';
 import PeopleIcon from '@material-ui/icons/People';

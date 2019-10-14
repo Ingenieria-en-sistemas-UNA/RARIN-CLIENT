@@ -43,7 +43,7 @@ export class AuthBloc {
         return false;
     }
 
-    public logout = async () => {
+    public logout = () => {
         this.provider.logout();
         this.sesionStateController.next(false);
         this.userUserController.next(null);
