@@ -3,14 +3,14 @@ import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles'
 import { AppBar as AppBarMaterial } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import { History } from 'history';
 import clsx from 'clsx';
-
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
+import { BlocsContext } from '../../../store/Context';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,6 +64,13 @@ const useStyles = makeStyles((theme: Theme) =>
         width: 'auto',
       },
     },
+    logout: {
+      color: 'white',
+      '&:hover': {
+        color: theme.palette.secondary.main
+      },
+      marginLeft: 20
+    },
     searchIcon: {
       width: theme.spacing(7),
       height: '100%',
@@ -100,9 +107,15 @@ interface FromProps {
 
 export const AppBar: FC<FromProps> = ({ sesionState, open, handleDrawer, history }) => {
   const classes = useStyles();
+  const { authBloc } = useContext(BlocsContext);
+  const handleClose = () => {
+    authBloc.logout();
+    history.push('/login')
+  };
   return (
     <AppBarMaterial position="fixed" className={clsx(classes.appBar, open && classes.appBarShift)}>
       <Toolbar>
+
         {
           sesionState && (
             <IconButton
@@ -120,7 +133,7 @@ export const AppBar: FC<FromProps> = ({ sesionState, open, handleDrawer, history
           RARIN TECHNOLOGIES
         </Typography>
         {
-          sesionState ? (
+          sesionState && (
             <>
               <div className={classes.search}>
                 <div className={classes.searchIcon}>
@@ -135,8 +148,25 @@ export const AppBar: FC<FromProps> = ({ sesionState, open, handleDrawer, history
                   inputProps={{ 'aria-label': 'search' }}
                 />
               </div>
+              <div>
+                {
+                  sesionState && (
+                    <IconButton
+                      aria-label="account of current user"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      onClick={handleClose}
+                      className={classes.logout}
+                    >
+                      <PowerSettingsNewIcon />
+                    </IconButton>
+                  )
+                }
+
+              </div>
+
             </>
-          ) : <Button color="inherit">Login</Button>
+          ) 
 
         }
       </Toolbar>
