@@ -8,6 +8,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { History } from 'history';
 import { validateLogin } from '../utils/validators/LoginValidator';
 import { BlocsContext } from '../store/Context';
+import { StreamBuilder, Snapshot } from '../utils/BlocBuilder/index';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
     '@global': {
@@ -20,6 +22,10 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center'
+    },
+    progress: {
+        margin: theme.spacing(10),
     },
     avatar: {
         margin: theme.spacing(1),
@@ -28,6 +34,7 @@ const useStyles = makeStyles(theme => ({
     form: {
         width: '50%', // Fix IE 11 issue.
         marginTop: theme.spacing(1),
+        textAlign: 'center'
     },
     submit: {
         margin: theme.spacing(3, 0, 2),
@@ -38,13 +45,9 @@ interface FromProps {
     history: History
 }
 const LoginPage: FC<FromProps> = ({ history }) => {
-
-
-    
-
     const classes = useStyles();
     const { authBloc } = useContext(BlocsContext);
-    if(authBloc.isLoggedin()){
+    if (authBloc.isLoggedin()) {
         history.push(localStorage.getItem('route') || '/')
     }
     const [email, setEmail] = useState('');
@@ -58,14 +61,13 @@ const LoginPage: FC<FromProps> = ({ history }) => {
         if (!Object.keys(result).length) {
             try {
                 await authBloc.login(email, password);
-                history.push('/')
+                setTimeout(()=> history.push('/'), 2000)
             } catch ({ message }) {
                 setErrors({ general: message });
             }
         } else {
             setErrors(result)
         }
-
 
     }
     return (
@@ -76,43 +78,57 @@ const LoginPage: FC<FromProps> = ({ history }) => {
             <Typography component="h1" variant="h5">
                 Sign in
                 </Typography>
-            <form className={classes.form} onSubmit={e => onSubmit(e)} noValidate>
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                />
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                />
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                >
-                    Sign In
-                    </Button>
-            </form>
+            <StreamBuilder
+                stream={authBloc.loadingStateStrem()}
+                builder={(snapshot: Snapshot<boolean>) => {
+                    let state: boolean | undefined = snapshot.data;
+                    if (!state) {
+
+                        return (
+                            <form className={classes.form} onSubmit={e => onSubmit(e)} noValidate>
+                                <TextField
+                                    variant="outlined"
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    name="email"
+                                    autoComplete="email"
+                                    autoFocus
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                />
+                                <TextField
+                                    variant="outlined"
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                />
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    className={classes.submit}
+                                >
+                                    Sign In
+                                </Button>
+                            </form>
+                        )
+
+                    } else {
+                        return <CircularProgress variant="indeterminate" className={classes.progress}/>
+                    }
+                }}
+            />
         </div>
     );
 }
