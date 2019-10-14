@@ -36,7 +36,7 @@ export const Layout: FC<FromProps> = ({ children, sesionState, history }) => {
         open={drawer}
         handleDrawer={setDrawer}
       />
-      <Grid container spacing={3}>
+      <Grid container>
         {
           sesionState && (
             <Grid item xs={drawer ? 2 : 1}>
