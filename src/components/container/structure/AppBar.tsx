@@ -98,30 +98,10 @@ interface FromProps {
   handleDrawer: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-export const AppBar: FC<FromProps> = ({ sesionState, open: openDrawer, handleDrawer, history }) => {
+export const AppBar: FC<FromProps> = ({ sesionState, open, handleDrawer, history }) => {
   const classes = useStyles();
-  const [auth, setAuth] = React.useState(true);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAuth(event.target.checked);
-  };
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const onClickLogout = () =>{
-        
-  };
-  
   return (
-    <AppBarMaterial position="fixed" className={clsx(classes.appBar, openDrawer && classes.appBarShift)}>
+    <AppBarMaterial position="fixed" className={clsx(classes.appBar, open && classes.appBarShift)}>
       <Toolbar>
         {
           sesionState && (
@@ -130,7 +110,7 @@ export const AppBar: FC<FromProps> = ({ sesionState, open: openDrawer, handleDra
               color="inherit"
               aria-label="open drawer"
               onClick={() => handleDrawer(true)}
-              className={clsx(classes.menuButton, openDrawer && classes.menuButtonHidden)}
+              className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
             >
               <MenuIcon />
             </IconButton>
