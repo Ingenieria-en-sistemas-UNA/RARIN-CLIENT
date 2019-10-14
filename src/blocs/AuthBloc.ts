@@ -6,11 +6,13 @@ export class AuthBloc {
 
     private provider: AuthProvider = new AuthProvider()
     private sesionStateController = new BehaviorSubject<boolean>(false);
+    private loadingController = new BehaviorSubject<boolean>(false);
     private userUserController = new BehaviorSubject<User | null>(null);
 
 
     public sesionStateStream = () => this.sesionStateController.asObservable()
     public userUserStateStrem = () => this.userUserController.asObservable()
+    public loadingStateStrem = () => this.loadingController.asObservable()
 
     public load = () => {
         const User: User | null = this.provider.getUser();
@@ -21,6 +23,7 @@ export class AuthBloc {
     }
 
     public login = async (email: string, password: string): Promise<void> => {
+        this.loadingController.next(true);
         const user: User | null = await this.provider.login(email, password);
         if (user != null) {
             this.sesionStateController.next(true);
@@ -29,6 +32,7 @@ export class AuthBloc {
             this.sesionStateController.next(false);
             this.userUserController.next(null);
         }
+        this.loadingController.next(false)
     }
 
     public isLoggedin = (): boolean => {
@@ -52,6 +56,7 @@ export class AuthBloc {
     public dispose = () => {
         this.sesionStateController.complete();
         this.userUserController.complete();
+        this.loadingController.complete();
     }
 
 }
