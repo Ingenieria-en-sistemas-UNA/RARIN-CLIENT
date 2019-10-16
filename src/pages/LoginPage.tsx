@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
+import { useSnackbar } from 'notistack';
 import { makeStyles } from '@material-ui/core/styles';
 import { History } from 'history';
 import { validateLogin } from '../utils/validators/LoginValidator';
@@ -47,11 +48,12 @@ interface FromProps {
 const LoginPage: FC<FromProps> = ({ history }) => {
     const classes = useStyles();
     const { authBloc } = useContext(BlocsContext);
+    const { enqueueSnackbar } = useSnackbar();
     if (authBloc.isLoggedin()) {
         history.push(localStorage.getItem('route') || '/')
     }
     const [email, setEmail] = useState('');
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState<any>({});
     const [password, setPassword] = useState('');
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,15 +62,17 @@ const LoginPage: FC<FromProps> = ({ history }) => {
         const result = validateLogin(sinErrors);
         if (!Object.keys(result).length) {
             try {
-                await authBloc.login(email, password);
-                setTimeout(()=> history.push('/'), 2000)
+                const isLogged = await authBloc.login(email, password);
+                if(isLogged){
+                    enqueueSnackbar('Se ha logeado exitosamente', { variant: 'success' })
+                }
+                setTimeout(() => history.push('/'), 2000)
             } catch ({ message }) {
-                setErrors({ general: message });
+                enqueueSnackbar('Algo ocurrio al intentar logear', { variant: 'error' })
             }
         } else {
-            setErrors(result)
+            setErrors(result);
         }
-
     }
     return (
         <div className={classes.paper}>
@@ -77,13 +81,12 @@ const LoginPage: FC<FromProps> = ({ history }) => {
             </Avatar>
             <Typography component="h1" variant="h5">
                 Sign in
-                </Typography>
+            </Typography>
             <StreamBuilder
-                stream={authBloc.loadingStateStrem()}
+                stream={authBloc.loadingStrem()}
                 builder={(snapshot: Snapshot<boolean>) => {
                     let state: boolean | undefined = snapshot.data;
                     if (!state) {
-
                         return (
                             <form className={classes.form} onSubmit={e => onSubmit(e)} noValidate>
                                 <TextField
@@ -93,9 +96,11 @@ const LoginPage: FC<FromProps> = ({ history }) => {
                                     fullWidth
                                     id="email"
                                     label="Email Address"
+                                    helperText={errors.email ? errors.email : ""}
                                     name="email"
                                     autoComplete="email"
                                     autoFocus
+                                    error={errors.email ? true : false}
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
                                 />
@@ -108,6 +113,7 @@ const LoginPage: FC<FromProps> = ({ history }) => {
                                     label="Password"
                                     type="password"
                                     id="password"
+                                    error={errors.password ? true : false}
                                     autoComplete="current-password"
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
@@ -120,12 +126,13 @@ const LoginPage: FC<FromProps> = ({ history }) => {
                                     className={classes.submit}
                                 >
                                     Sign In
-                                </Button>
+                                            </Button>
+
                             </form>
                         )
 
                     } else {
-                        return <CircularProgress variant="indeterminate" className={classes.progress}/>
+                        return <CircularProgress variant="indeterminate" className={classes.progress} />
                     }
                 }}
             />

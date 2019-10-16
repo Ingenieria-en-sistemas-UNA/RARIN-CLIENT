@@ -1,11 +1,14 @@
 import decode from 'jwt-decode'
 import { BaseProvider } from './BaseProvider';
 import { User, Convert } from '../Models/User';
+import { ResponseUser } from '../Models/Responses';
+
+
 
 export class AuthProvider extends BaseProvider {
 
     
-    login = async(email: string, password: string) : Promise<User | null> => {
+    login = async(email: string, password: string) : Promise<ResponseUser> => {
         try {
             const response: Response = await fetch(`${this._baseUrlApi}/api/users/login`, {
                 headers: {
@@ -21,11 +24,12 @@ export class AuthProvider extends BaseProvider {
                 this.setToken(json.data.token);
                 const user: User = { ...json.data.person, role: this.getRole() }; 
                 this.setUser(user);
-                return user;
+                return { ok: true, user };
             }
-            throw new Error('Erro API');
+            const { ok, errors }: ResponseUser = await response.json();
+            return { ok, errors }
         } catch (error) {
-            return null;
+            return { ok: false, errors: ['Algo ha ocurrido'] };
         }
     }
 
