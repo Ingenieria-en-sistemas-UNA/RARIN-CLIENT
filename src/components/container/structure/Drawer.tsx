@@ -110,7 +110,7 @@ export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
                         <ListItemIcon>
                             <PeopleIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Customers" />
+                        <ListItemText primary="Mi Perfil" />
                     </ListItem>
                     <ListItem button>
                         <ListItemIcon>
