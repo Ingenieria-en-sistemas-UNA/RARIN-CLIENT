@@ -66,7 +66,7 @@ const LoginPage: FC<FromProps> = ({ history }) => {
                 if(isLogged){
                     enqueueSnackbar('Se ha logeado exitosamente', { variant: 'success' })
                 }
-                setTimeout(() => history.push('/'), 2000)
+                setTimeout(() => history.push('/'), 1000)
             } catch ({ message }) {
                 enqueueSnackbar('Algo ocurrio al intentar logear', { variant: 'error' })
             }
