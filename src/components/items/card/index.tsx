@@ -7,7 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-
+import programmer from '../../../assets/image/programmer.jpeg';
 const useStyles = makeStyles({
   card: {
     maxWidth: 345,
@@ -26,7 +26,7 @@ const Card = () => {
       <CardActionArea>
         <CardMedia
           className={classes.media}
-          image="/static/images/cards/contemplative-reptile.jpg"
+          image={programmer}
           title="Contemplative Reptile"
         />
         <CardContent>
@@ -34,7 +34,7 @@ const Card = () => {
             Ricardo Morataya
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            Ricardo Morataya es un joven amante de los penes
+            El mejor programador de todos, amado por todos
           </Typography>
         </CardContent>
       </CardActionArea>
