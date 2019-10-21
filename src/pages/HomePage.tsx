@@ -11,6 +11,8 @@ import CategoryIcon from '@material-ui/icons/Category';
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import { BlocsContext } from '../store/Context';
+import CategoryDialog from '../components/items/category/index';
+import ProductDialog from '../components/items/product/index';
 
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8]
@@ -117,20 +119,51 @@ const Animation: FC<any> = ({ children, delay = 1 }) => {
 const Buttons: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
+  const [openCategory, setOpenCategory] = React.useState(false);
+  const [openProduct, setOpenProduct] = React.useState(false);
+
+  const handleClickOpenProduct = () => {
+    setOpenProduct(true);
+  };
+
+  const handleCloseProduct = () => {
+    setOpenProduct(false);
+  };
+  const handleClickOpenCategory = () => {
+    setOpenCategory(true);
+  };
+
+  const handleCloseCategory = () => {
+    setOpenCategory(false);
+  };
   return (
     <>
-      <Animation delay={50}>
-        <Fab variant="extended" aria-label="delete" className={classes.fabExtras} style={{ bottom: theme.spacing(20) }}>
+      <Animation delay={25}>
+        <Fab
+          variant="extended"
+          aria-label="Categoría"
+          className={classes.fabExtras}
+          style={{ bottom: theme.spacing(20) }}
+          onClick={handleClickOpenCategory}
+        >
           <CategoryIcon className={classes.extendedIcon} />
           Categoría
-            </Fab>
+        </Fab>
       </Animation>
       <Animation>
-        <Fab variant="extended" aria-label="delete" className={classes.fabExtras} style={{ bottom: theme.spacing(12) }}>
+        <Fab 
+          variant="extended" 
+          aria-label="delete" 
+          className={classes.fabExtras} 
+          style={{ bottom: theme.spacing(12) }}
+          onClick={handleClickOpenProduct}
+        >
           <WidgetsIcon className={classes.extendedIcon} />
           Producto
           </Fab>
       </Animation>
+      <CategoryDialog open={openCategory} handleClose={handleCloseCategory} />
+      <ProductDialog open={openProduct} handleClose={handleCloseProduct} />
     </>
   )
 }
@@ -193,7 +226,7 @@ const HomePage: FC = () => {
                 aria-label={fab.label}
                 className={fab.className}
                 color={fab.color}
-                onClick={() => setTimeout(() => addState(!add), 200) }
+                onClick={() => setTimeout(() => addState(!add), 200)}
               >
                 {add ? fab.icon : <ClearIcon />}
               </Fab>
