@@ -1,4 +1,4 @@
-import React from 'react';
+import React , { FC, useState, useContext } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,13 +12,19 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { useSnackbar } from 'notistack';
+import { History } from 'history';
+import { validateLogin } from '../utils/validators/LoginValidator';
+import { BlocsContext } from '../store/Context';
+import { StreamBuilder, Snapshot } from '../utils/BlocBuilder/index';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+        RARIN TECHNOLOGIES
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -50,9 +56,39 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
+interface FromProps {
+    history: History
+}
+ const SignUpPage: FC<FromProps> = ({ history }) => {
+    const classes = useStyles();
+    const { authBloc } = useContext(BlocsContext);
+    const { enqueueSnackbar } = useSnackbar();
+    if (authBloc.isLoggedin()) {
+        history.push(localStorage.getItem('route') || '/')
+    }
+    const [client, setClient] = useState('');
+    const [email, setEmail] = useState('');
+    const [errors, setErrors] = useState<any>({});
+    const [password, setPassword] = useState('');
 
- const SingUpPage = () => {
-  const classes = useStyles();
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const sinErrors = {client, email, password };
+        const result = validateLogin(sinErrors);
+        if (!Object.keys(result).length) {
+            try {
+                const isLogged = await authBloc.login(email, password);
+                if(isLogged){
+                    enqueueSnackbar('Se ha registrado exitosamente', { variant: 'success' })
+                }
+                setTimeout(() => history.push('/'), 1000)
+            } catch ({ message }) {
+                enqueueSnackbar('Algo ocurrio al intentar registrarse', { variant: 'error' })
+            }
+        } else {
+            setErrors(result);
+        }
+    }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -95,9 +131,14 @@ const useStyles = makeStyles(theme => ({
                 required
                 fullWidth
                 id="email"
+                helperText={errors.email ? errors.email : ""}
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                autoFocus
+                error={errors.email ? true : false}
+                value={email}
+                onChange={e => setEmail(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -143,4 +184,4 @@ const useStyles = makeStyles(theme => ({
     </Container>
   );
 }
-export default SingUpPage;
+export default SignUpPage;
