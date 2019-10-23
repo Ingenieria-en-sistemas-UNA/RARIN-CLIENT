@@ -2,13 +2,40 @@ import decode from 'jwt-decode'
 import { BaseProvider } from './BaseProvider';
 import { User, Convert } from '../Models/User';
 import { ResponseUser } from '../Models/Responses';
+import { Client } from '../Models/Client';
 
 
 
 export class AuthProvider extends BaseProvider {
 
-    
-    login = async(email: string, password: string) : Promise<ResponseUser> => {
+
+    signup = async (client: Client, email: string, password: string): Promise<ResponseUser> => {
+        client.vouchers = [];
+        try {
+            const response: Response = await fetch(`${this._baseUrlApi}/api/users/signup`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify({ email, password, client: { ...client, shoppingCar: {} } })
+            })
+
+            if (response.status >= 200 && response.status < 300) {
+                const { data: { token, client } }: any = await response.json();
+                this.setToken(token);
+                const user: User = { client, role: this.getRole() };
+                this.setUser(user);
+                return { ok: true, user };
+            }
+            const { ok, errors }: ResponseUser = await response.json();
+            return { ok, errors }
+        } catch (error) {
+            return { ok: false, errors: ['Algo ha ocurrido al tratar de registrarse'] };
+        }
+    }
+
+    login = async (email: string, password: string): Promise<ResponseUser> => {
         try {
             const response: Response = await fetch(`${this._baseUrlApi}/api/users/login`, {
                 headers: {
@@ -19,41 +46,41 @@ export class AuthProvider extends BaseProvider {
                 body: JSON.stringify({ email, password })
             })
 
-            if(response.status >= 200 && response.status < 300){
-                const json: any = await response.json();
-                this.setToken(json.data.token);
-                const user: User = { ...json.data.person, role: this.getRole() }; 
+            if (response.status >= 200 && response.status < 300) {
+                const { data: { token, client } }: any = await response.json();
+                this.setToken(token);
+                const user: User = { client, role: this.getRole() };
                 this.setUser(user);
                 return { ok: true, user };
             }
             const { ok, errors }: ResponseUser = await response.json();
             return { ok, errors }
         } catch (error) {
-            return { ok: false, errors: ['Algo ha ocurrido'] };
+            return { ok: false, errors: ['Algo ha ocurrido al tratar de iniciar sesión'] };
         }
     }
 
 
-    setUser = ( User: User): void => localStorage.setItem('User', Convert.UserToJson(User));
+    setUser = (User: User): void => localStorage.setItem('User', Convert.UserToJson(User));
 
     getUser = (): User | null => {
         const userString = localStorage.getItem('User') || '';
-        if(userString !== ''){
+        if (userString !== '') {
             const user: User = Convert.toUser(userString);
             return user;
         }
         return null;
     }
 
-    getRole = () : string | null  => {
-        if(this.loggedIn()){
+    getRole = (): string => {
+        if (this.loggedIn()) {
             const { role } = decode(this.getToken());
             return role;
         }
-        return null;
+        return '';
     }
 
-    setToken = ( token: string): void => localStorage.setItem('id_token', token);
+    setToken = (token: string): void => localStorage.setItem('id_token', token);
 
     getToken = (): string => localStorage.getItem('id_token') || '';
 
@@ -66,7 +93,7 @@ export class AuthProvider extends BaseProvider {
         const token = this.getToken()
         return !!token && !this.isTokenExpired(token)
     }
-    
+
     isTokenExpired = (token: string) => {
         try {
             const decoded: any = decode(token)

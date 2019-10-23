@@ -1,7 +1,6 @@
+import { Client } from './Client';
 export interface User {
-    id:       number;
-    name:     string;
-    lastName: string;
+    client: Client;
     role: string;
 }
 
