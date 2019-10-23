@@ -3,6 +3,7 @@ import { AuthProvider } from '../Providers/AuthProvider';
 import { User } from '../Models/User';
 import { ResponseUser } from '../Models/Responses';
 import { Error } from '../Models/Errors';
+import { Client } from '../Models/Client';
 
 export class AuthBloc {
 
@@ -33,6 +34,10 @@ export class AuthBloc {
     public login = async (email: string, password: string): Promise<boolean> => {
         this.loadingController.next(true);
         const response: ResponseUser = await this.provider.login(email, password);
+        return this.tryConnect(response);
+    }
+    
+    public tryConnect = (response: ResponseUser): boolean => {
         let logged: boolean = false;
         let errors: Error[] = [];
         if(response.ok){
@@ -55,6 +60,12 @@ export class AuthBloc {
         }
         this.loadingController.next(false)
         return logged
+    }
+
+    public signup = async (client: Client, email: string, password: string): Promise<boolean> => {
+        this.loadingController.next(true);
+        const response: ResponseUser = await this.provider.signup(client, email, password);
+        return this.tryConnect(response);
     }
 
     public isLoggedin = (): boolean => {
