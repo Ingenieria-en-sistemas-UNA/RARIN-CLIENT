@@ -3,7 +3,7 @@ import { BaseProvider } from './BaseProvider';
 import { User, Convert } from '../Models/User';
 import { ResponseUser } from '../Models/Responses';
 import { Client } from '../Models/Client';
-
+import { Error } from '../Models/Errors';
 
 
 export class AuthProvider extends BaseProvider {
@@ -28,7 +28,10 @@ export class AuthProvider extends BaseProvider {
                 this.setUser(user);
                 return { ok: true, user };
             }
-            const { ok, errors }: ResponseUser = await response.json();
+            let { ok, errors } = await response.json();
+            if( errors[0].code ){
+                errors = errors.map(({ description }: any): string =>  description );
+            }
             return { ok, errors }
         } catch (error) {
             return { ok: false, errors: ['Algo ha ocurrido al tratar de registrarse'] };
@@ -53,7 +56,11 @@ export class AuthProvider extends BaseProvider {
                 this.setUser(user);
                 return { ok: true, user };
             }
-            const { ok, errors }: ResponseUser = await response.json();
+            let { ok, errors } = await response.json();
+
+            if( errors.code ){
+                errors = [ errors.description ]
+            }
             return { ok, errors }
         } catch (error) {
             return { ok: false, errors: ['Algo ha ocurrido al tratar de iniciar sesión'] };

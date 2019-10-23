@@ -16,6 +16,7 @@ const App: FC = (props: any) => {
   const addSnackbar = (message: string, variant: VariantType) => {
     enqueueSnackbar(message, { variant });
   };
+  
   authBloc.load();
   useEffect(() => {
     authBloc.errorsStrem().subscribe(

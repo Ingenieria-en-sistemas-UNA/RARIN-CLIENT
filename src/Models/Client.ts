@@ -2,8 +2,7 @@ import { Person } from './Person';
 import { ShoppingCar } from './ShoppingCar';
 import { Voucher } from './Voucher';
 export interface Client{
-    id : number;
-    name: string;
+    id?: number;
     person: Person;
     shoppingCard?: ShoppingCar;
     vouchers?: Voucher[]

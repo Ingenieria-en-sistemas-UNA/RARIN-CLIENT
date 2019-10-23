@@ -5,6 +5,8 @@ import TextField from '@material-ui/core/TextField';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { useSnackbar } from 'notistack';
+import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import { History } from 'history';
 import { validateLogin } from '../utils/validators/LoginValidator';
@@ -63,7 +65,7 @@ const LoginPage: FC<FromProps> = ({ history }) => {
         if (!Object.keys(result).length) {
             try {
                 const isLogged = await authBloc.login(email, password);
-                if(isLogged){
+                if (isLogged) {
                     enqueueSnackbar('Se ha logeado exitosamente', { variant: 'success' })
                 }
                 setTimeout(() => history.push('/'), 1000)
@@ -127,6 +129,13 @@ const LoginPage: FC<FromProps> = ({ history }) => {
                                 >
                                     Sign In
                                             </Button>
+                                <Grid container justify="center">                                  
+                                    <Grid item>
+                                        <Button onClick={()=>history.push("/signup")}>
+                                            ¿No tienes una cuenta? Registrate aquí
+                                        </Button>
+                                    </Grid>
+                                </Grid>
 
                             </form>
                         )
