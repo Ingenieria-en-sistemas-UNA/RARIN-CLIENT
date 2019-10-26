@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -14,6 +14,9 @@ import { green } from '@material-ui/core/colors';
 import Fab from '@material-ui/core/Fab';
 import CheckIcon from '@material-ui/icons/Check';
 import clsx from 'clsx';
+import { BlocsContext } from '../../../store/Context';
+import { Category } from '../../../Models/Category';
+import {CategoryValidator} from  '../../../utils../CategoryValidator';
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         button: {
@@ -49,26 +52,27 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function CategoryDialog({ open, handleClose }: any) {
     const classes = useStyles();
+    const { categoryBloc } = useContext(BlocsContext);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+
     const buttonClassname = clsx({
         [classes.buttonSuccess]: success,
     });
 
-    useEffect(() => {
-        return () => {
-            clearTimeout(2000);
-        };
-    }, []);
-
-    const handleButtonClick = () => {
+    const handleButtonClick = async() => {
         if (!loading) {
             setSuccess(false);
             setLoading(true);
+            // validar
+            <CategoryValidator/>
+            // Validacion pasada
+            const category: Category = {id,name };
+            const created: boolean = await categoryBloc.add(category);
             setTimeout(() => {
                 setSuccess(true);
                 setLoading(false);
-            }, 2000);
+            }, 1000);
         }
     };
 

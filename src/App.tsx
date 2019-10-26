@@ -25,6 +25,8 @@ const App: FC = (props: any) => {
             authBloc.cleanErrors();
         }
       });
+
+      
   });
   //  const { sesionStateStream }: AuthBloc = this.context;
 
