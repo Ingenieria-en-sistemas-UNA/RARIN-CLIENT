@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useEffect, useRef, useState, useContext } from 'react';
+=======
+import React, { useEffect, useState } from 'react';
+>>>>>>> f53293f1d7a311f97f8ded1a4711b47da3da2ead
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
