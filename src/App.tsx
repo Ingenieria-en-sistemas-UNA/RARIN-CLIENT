@@ -24,10 +24,11 @@ const App: FC = (props: any) => {
       cleanErrors();
     }
   }
-  authBloc.load();
-  categoryBloc.load();
-  productBloc.load();
+
   useEffect(() => {
+    authBloc.load();
+    categoryBloc.load();
+
     authBloc.errorsStrem().subscribe(ErrorObserver(authBloc.cleanErrors));
     categoryBloc.errorsStrem().subscribe(ErrorObserver(categoryBloc.cleanErrors));
     productBloc.errorsStrem().subscribe(ErrorObserver(productBloc.cleanErrors));

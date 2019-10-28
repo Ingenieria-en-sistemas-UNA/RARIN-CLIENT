@@ -1,6 +1,6 @@
-import React, { FC, useState, useContext } from 'react';
+import React, { FC, useState, useContext, useEffect } from 'react';
 import Card from '../components/items/card'
-import { useTheme, Paper, Grid, Fab, Zoom } from '@material-ui/core';
+import { useTheme, Paper, Grid, Fab, Zoom, CircularProgress } from '@material-ui/core';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -183,6 +183,7 @@ const HomePage: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
   const [add, addState] = useState(true);
+
   const transitionDuration = {
     enter: theme.transitions.duration.enteringScreen,
     exit: theme.transitions.duration.leavingScreen,
@@ -215,13 +216,12 @@ const HomePage: FC = () => {
         </Grid>
       </Paper>
       <Grid container justify='space-around' direction='row' wrap='wrap' style={{ display: 'flex', alignItems: 'flex-start', padding: 20 }}>
-
         <StreamBuilder
           stream={productBloc.productStrem()}
           builder={(snapshot: Snapshot<Product[]>) => {
-            let products: Product[] | undefined = snapshot.data
-            if (products === undefined) {
-              products = []
+            let products: Product[] = snapshot.data || []
+            if (!snapshot.hasData) {
+              return <CircularProgress variant="indeterminate" className={classes.progress} />
             }
             return products.map((product: Product, index: number) => <Card key={index} product={product} />)
           }}

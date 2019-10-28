@@ -1,4 +1,4 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Error } from '../Models/Errors';
 import { ResponseProduct } from '../Models/Responses';
 import { ProductsProvider } from '../Providers/ProductsProvider';
@@ -7,11 +7,18 @@ import { FileProvider } from '../Providers/FileProvider';
 
 export class ProductBloc {
 
+    constructor() {
+        this.products = [];
+        this.productStrem().subscribe((products) => this.products = products)
+    }
+
     private productProvider: ProductsProvider = new ProductsProvider();
     private fileProvider: FileProvider = new FileProvider();
     private loadingController = new BehaviorSubject<boolean>(false);
     private errorsController = new BehaviorSubject<Error[]>([]);
-    private productsController = new BehaviorSubject<Product[]>([]);
+    private productsController = new Subject<Product[]>();
+
+    private products: Product[];
 
     public loadingStrem = () => this.loadingController.asObservable()
     public errorsStrem = () => this.errorsController.asObservable()
@@ -39,20 +46,20 @@ export class ProductBloc {
         }
         this.loadingController.next(false)
     }
-    
-    public add = async (product: Product, file :File): Promise<boolean> => {
+
+    public add = async (product: Product, file: File): Promise<boolean> => {
         this.loadingController.next(true);
         let created: boolean = false;
         let errors: Error[] = [];
 
         const imageUrl: string | null = await this.fileProvider.upload(file);
 
-        if(imageUrl){
+        if (imageUrl) {
             product.imageUrl = imageUrl;
             const response: ResponseProduct = await this.productProvider.create(product);
             if (response.ok) {
                 if (response.product) {
-                    const products = this.productsController.value;
+                    const products = this.products;
                     products.push(response.product);
                     this.productsController.next(products);
                     created = true;

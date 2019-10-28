@@ -37,7 +37,6 @@ interface FromProps {
 
 const Card = ({ product }: FromProps) => {
   const classes = useStyles();
-  const [expanded, setExpanded] = useState(false);
   const [image, setImage] = useState()
 
   const loadImage = async () => {
@@ -53,14 +52,11 @@ const Card = ({ product }: FromProps) => {
   }
   useEffect(() => {
     loadImage()
-  }, [image])
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  }, [])
 
   return (
     <CardMaterial className={classes.card}>
-      <CardActionArea onClick={handleExpandClick}>
+      <CardActionArea>
         <CardMedia
           component='img'
           className={classes.media}
@@ -86,15 +82,6 @@ const Card = ({ product }: FromProps) => {
           Learn More
         </Button>
       </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
-            minutes.
-          </Typography>
-        </CardContent>
-      </Collapse>
     </CardMaterial>
 
   );
