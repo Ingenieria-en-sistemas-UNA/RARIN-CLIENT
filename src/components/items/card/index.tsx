@@ -76,10 +76,7 @@ const Card = ({ product }: FromProps) => {
       </CardActionArea>
       <CardActions>
         <Button size="small" color="primary">
-          Share
-        </Button>
-        <Button size="small" color="primary">
-          Learn More
+          Comprar
         </Button>
       </CardActions>
     </CardMaterial>
