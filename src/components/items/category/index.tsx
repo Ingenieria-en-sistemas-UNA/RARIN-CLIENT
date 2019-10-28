@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import React, { useEffect, useRef, useState, useContext } from 'react';
-=======
-import React, { useEffect, useState } from 'react';
->>>>>>> f53293f1d7a311f97f8ded1a4711b47da3da2ead
+import React, { useState, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -17,10 +13,13 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 import Fab from '@material-ui/core/Fab';
 import CheckIcon from '@material-ui/icons/Check';
+import ErrorIcon from '@material-ui/icons/Error';
 import clsx from 'clsx';
 import { BlocsContext } from '../../../store/Context';
 import { Category } from '../../../Models/Category';
-import {CategoryValidator} from  '../../../utils../CategoryValidator';
+import { CategoryValidator } from '../../../utils/validators/CategoryValidator';
+import { useSnackbar } from 'notistack';
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         button: {
@@ -57,34 +56,60 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CategoryDialog({ open, handleClose }: any) {
     const classes = useStyles();
     const { categoryBloc } = useContext(BlocsContext);
+    const { enqueueSnackbar } = useSnackbar();
+
+    const [description, setDescription] = useState('');
+    const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [errors, setErrors] = useState<any>({});
 
     const buttonClassname = clsx({
         [classes.buttonSuccess]: success,
     });
 
-    const handleButtonClick = async() => {
-        if (!loading) {
-            setSuccess(false);
-            setLoading(true);
-            // validar
-            <CategoryValidator/>
-            // Validacion pasada
-            const category: Category = {id,name };
-            const created: boolean = await categoryBloc.add(category);
-            setTimeout(() => {
-                setSuccess(true);
-                setLoading(false);
-            }, 1000);
-        }
-    };
-
     const handleButtonClose = () => {
         setSuccess(false);
         setLoading(false);
+        setDescription('');
+        setName('');
+        setErrors({ noCreated: false });
         handleClose();
     }
+
+    const handleButtonClick = async () => {
+        if (!loading) {
+            setSuccess(false);
+            setLoading(true);
+            const sinErrors = { name, description };
+            const result = CategoryValidator(sinErrors);
+            if (!Object.keys(result).length) {
+                try {
+                    const category: Category = { description, name }
+                    const created = await categoryBloc.add(category);
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 1000);
+                    if (created) {
+                        enqueueSnackbar('Se ha creado una categoría', { variant: 'success' })
+                        setSuccess(true);
+                        setTimeout(() => {
+                            handleButtonClose()
+                        }, 500);
+                    } else {
+                        setErrors({ noCreated: true });
+                        setTimeout(() => {
+                            setErrors({ noCreated: false });
+                        }, 2000);
+                    }
+                } catch ({ message }) {
+                    enqueueSnackbar('Algo ocurrio al intentar crear la categoría', { variant: 'error' })
+                }
+            } else {
+                setErrors(result);
+            }
+        }
+    };
 
     return (
         <Dialog open={open} onClose={handleButtonClose} aria-labelledby='form-dialog-title'>
@@ -97,6 +122,10 @@ export default function CategoryDialog({ open, handleClose }: any) {
                     <Grid item xs={3}>
                         <TextField
                             autoFocus
+                            value={ name }
+                            onChange={ e => setName(e.target.value)}
+                            error={ errors.name ? true : false }
+                            helperText={errors.name ? errors.name : ''}
                             margin='dense'
                             id='name'
                             label='Nombre'
@@ -107,6 +136,9 @@ export default function CategoryDialog({ open, handleClose }: any) {
                         <TextField
                             margin='dense'
                             id='description'
+                            value={ description }
+                            onChange={ e => setDescription(e.target.value)}
+                            helperText={errors.description ? errors.description : ''}
                             label='Descripción'
                             fullWidth
                         />
@@ -123,8 +155,9 @@ export default function CategoryDialog({ open, handleClose }: any) {
                         color="primary"
                         className={buttonClassname}
                         onClick={handleButtonClick}
+                        disabled={ success || errors.noCreated }
                     >
-                        {success ? <CheckIcon /> : <SaveIcon />}
+                        { !errors.noCreated ? success ? <CheckIcon /> : <SaveIcon /> : <ErrorIcon />}
                     </Fab>
                     {loading && <CircularProgress size={68} className={classes.fabProgress} />}
                 </div>

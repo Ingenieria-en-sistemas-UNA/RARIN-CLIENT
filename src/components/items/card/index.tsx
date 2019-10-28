@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Card as CardMaterial, Collapse } from '@material-ui/core';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -7,12 +7,13 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import programmer from '../../../assets/image/programmer.jpeg';
+import { Product } from '../../../Models/Product';
+import imageDefault from '../../../assets/image/default.png'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     card: {
       maxWidth: 190,
-      marginTop: 20
+      margin: '20px 20px 0px 0px'
     },
     media: {
       height: 120,
@@ -29,10 +30,30 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }));
 
-const Card = () => {
+interface FromProps {
+  product: Product;
+}
+
+
+const Card = ({ product }: FromProps) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
+  const [image, setImage] = useState()
 
+  const loadImage = async () => {
+    try {
+      if (product.imageUrl as string) {
+        const photo = await fetch(`${product.imageUrl}`).then(response => response.blob());
+        setImage(photo)
+      }
+    } catch (error) {
+      const photo = await fetch(imageDefault).then(response => response.blob())
+      setImage(photo)
+    }
+  }
+  useEffect(() => {
+    loadImage()
+  }, [image])
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -41,16 +62,19 @@ const Card = () => {
     <CardMaterial className={classes.card}>
       <CardActionArea onClick={handleExpandClick}>
         <CardMedia
+          component='img'
           className={classes.media}
-          image={programmer}
+          image={image ? URL.createObjectURL(image) : require('../../../assets/image/default.png')}
           title="Contemplative Reptile"
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            Ricardo Morataya
+            {
+              product.name
+            }
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            El mejor programador de todos, amado por todos
+            Precio: ${ product.price }
           </Typography>
         </CardContent>
       </CardActionArea>

@@ -1,11 +1,12 @@
 export interface Product{
-    id : number;
+    id?: number;
     name: string;
     price: number;
     stock: number;
-    createdAt: Date;
-    updatedAt: Date;
-    imageUrl: string;
+    categoryId: number;
+    createdAt?: Date;
+    updatedAt?: Date;
+    imageUrl?: string;
 }
 
 export class ProductConvert {

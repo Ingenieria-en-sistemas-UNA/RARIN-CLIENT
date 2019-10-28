@@ -44,7 +44,7 @@ export const Layout: FC<FromProps> = ({ children, sesionState, history }) => {
             </Grid>
           )
         }
-        <Grid item xs={drawer ? 10 : sesionState ? 11 : 12} style={{ marginTop: 60 }}>
+        <Grid item xs={drawer ? 10 : sesionState ? 11 : 12}>
           <AppContainer>
             {
               children

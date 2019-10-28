@@ -3,8 +3,6 @@ import { BaseProvider } from './BaseProvider';
 import { User, Convert } from '../Models/User';
 import { ResponseUser } from '../Models/Responses';
 import { Client } from '../Models/Client';
-import { Error } from '../Models/Errors';
-
 
 export class AuthProvider extends BaseProvider {
 

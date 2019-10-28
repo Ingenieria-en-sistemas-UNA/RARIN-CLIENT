@@ -1,7 +1,7 @@
 import { number } from "prop-types"
 
 export interface Category {
-    id: number;
+    id?: number;
     name: string;
     description: string;
 }

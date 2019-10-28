@@ -6,7 +6,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { useSnackbar } from 'notistack';
 import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import { History } from 'history';
 import { validateLogin } from '../utils/validators/LoginValidator';
@@ -100,8 +99,7 @@ const LoginPage: FC<FromProps> = ({ history }) => {
                                     label="Email Address"
                                     helperText={errors.email ? errors.email : ""}
                                     name="email"
-                                    autoComplete="email"
-                                    autoFocus
+                                    type="text"
                                     error={errors.email ? true : false}
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
@@ -116,7 +114,6 @@ const LoginPage: FC<FromProps> = ({ history }) => {
                                     type="password"
                                     id="password"
                                     error={errors.password ? true : false}
-                                    autoComplete="current-password"
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
                                 />

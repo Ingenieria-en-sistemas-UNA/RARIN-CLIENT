@@ -12,13 +12,17 @@ export class FileProvider extends BaseProvider {
         }
     })
 
-    public upload = async ( file: File ): Promise<string | null> => {
+    public upload = async (file: File): Promise<string | null> => {
         try {
-            const formData: FormData =  new FormData();
+            const formData: FormData = new FormData();
             formData.append('file', file);
-            const response = await this._uri.post('v1_1/dhp8mrpln/image/upload', formData);
-            const { data } = response.data;
-            return '';
+            const response = await fetch(`${this._baseUrlApi}/api/files`, {
+                method: 'POST',
+                body: formData,
+            });
+            const { imageUrl } = await response.json();
+            console.log(imageUrl);
+            return imageUrl;
         } catch (error) {
             return null
         }

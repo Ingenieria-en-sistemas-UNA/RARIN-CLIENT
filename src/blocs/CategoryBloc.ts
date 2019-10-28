@@ -15,28 +15,51 @@ export class CategoryBloc {
     public errorsStrem = () => this.errorsController.asObservable()
     public categoriesStrem = () => this.categoriesController.asObservable()
 
-    public add = async(category: Category): Promise<boolean> => {
+    public load = async () => {
+        this.loadingController.next(true);
+        const response: ResponseCategory = await this.provider.get();
+        let errors: Error[] = [];
+        if (response.ok) {
+            if (response.categories) {
+                this.categoriesController.next(response.categories);
+            } else {
+                errors = [{ message: 'Algo ha ocurrido con la categoria' }];
+            }
+        } else {
+            if (response.errors) {
+                errors = response.errors.map((message: string): Error => ({ message }));
+            } else {
+                errors = [{ message: 'Algo ha ocurrido' }];
+            }
+        }
+        if (errors.length > 0) {
+            this.errorsController.next(errors);
+        }
+        this.loadingController.next(false)
+    }
+
+    public add = async (category: Category): Promise<boolean> => {
         this.loadingController.next(true);
         const response: ResponseCategory = await this.provider.create(category);
         let created: boolean = false;
         let errors: Error[] = [];
-        if(response.ok){
+        if (response.ok) {
             if (response.category) {
                 const categories = this.categoriesController.value;
                 categories.push(response.category);
                 this.categoriesController.next(categories);
                 created = true;
             } else {
-                errors = [{ message: 'Algo ha ocurrido con la categoria'}];
+                errors = [{ message: 'Algo ha ocurrido con la categoria' }];
             }
         } else {
-            if(response.errors){
+            if (response.errors) {
                 errors = response.errors.map((message: string): Error => ({ message }));
             } else {
-                errors = [{ message: 'Algo ha ocurrido'}];
+                errors = [{ message: 'Algo ha ocurrido' }];
             }
         }
-        if(errors.length > 0){
+        if (errors.length > 0) {
             this.errorsController.next(errors);
         }
         this.loadingController.next(false)

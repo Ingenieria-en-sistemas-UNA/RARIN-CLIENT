@@ -1,4 +1,4 @@
-export const categoryValidator = (values: any) => {
+export const CategoryValidator = (values: any) => {
     const errors: any = {};
     if (!values.name) {
         errors.name = 'Debe agregar un nombre a la categoria'

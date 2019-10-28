@@ -1,19 +1,30 @@
-import { Category, CategoryConvert } from "../Models/Category";
+import { Category } from "../Models/Category";
 import { BaseProvider } from "./BaseProvider";
 import { ResponseCategory } from "../Models/Responses";
+import { AuthProvider } from './AuthProvider';
 
 export class CategoryProvider extends BaseProvider {
-  get = async () => {
+
+  private provider: AuthProvider = new AuthProvider()
+
+  get = async (): Promise<ResponseCategory> => {
     try {
-      const response: Response = await fetch(
-        `${this._baseUrlApi}/api/categories`
-      );
+      const response: Response = await fetch(`${this._baseUrlApi}/api/categories`, {
+        headers: {
+          'Authorization': `Bearer ${this.provider.getToken()}`
+        }
+      });
       if (response.status >= 200 && response.status < 300) {
         const categories = await response.json();
-        console.log({ categories });
+        return { ok: true, categories };
       }
-    } catch (error) {}
-  };
+      throw Error('Algo ha ocurrido')
+    } catch (error) {
+      return { ok: false, errors: [error.message] }
+    }
+  }
+
+
   delete = async (id: number) => {
     try {
       const response: Response = await fetch(
@@ -26,8 +37,10 @@ export class CategoryProvider extends BaseProvider {
         const categories = await response.json();
         console.log({ categories });
       }
-    } catch (error) {}
-  };
+    } catch (error) { }
+  }
+
+
   update = async (Category: Category) => {
     try {
       const response: Response = await fetch(
@@ -40,25 +53,32 @@ export class CategoryProvider extends BaseProvider {
         const categories = await response.json();
         console.log({ categories });
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
-  create = async (Category: Category): Promise<ResponseCategory> => {
+  create = async (category: Category): Promise<ResponseCategory> => {
     try {
       const response: Response = await fetch(
         `${this._baseUrlApi}/api/categories`,
         {
           method: "POST",
-          body: JSON.stringify(Category)
+          body: JSON.stringify(category),
+          headers: {
+            'Authorization': `Bearer ${this.provider.getToken()}`,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
         }
       );
       if (response.status >= 200 && response.status < 300) {
-        const categories = await response.json();
-        return { ok: true };
+        const categoryResponse = await response.json();
+        return { ok: true, category: categoryResponse };
       }
       throw Error('Algo ha ocurrido')
     } catch (error) {
-        return { ok: false, errors: [error.message] }
+      return { ok: false, errors: [error.message] }
     }
-  };
+  }
+
+
 }

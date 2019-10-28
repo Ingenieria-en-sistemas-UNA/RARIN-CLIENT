@@ -70,7 +70,7 @@ export const AppBar: FC<FromProps> = ({ sesionState, open, handleDrawer, history
     history.push('/login')
   };
   return (
-    <AppBarMaterial position="fixed" className={clsx(classes.appBar, open && classes.appBarShift)}>
+    <AppBarMaterial position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
       <Toolbar>
 
         {

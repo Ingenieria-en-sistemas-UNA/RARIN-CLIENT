@@ -1,6 +1,6 @@
 import React, { FC, useState, useContext } from 'react';
 import Card from '../components/items/card'
-import { useTheme, Paper, Grid, Fab, Zoom, } from '@material-ui/core';
+import { useTheme, Paper, Grid, Fab, Zoom } from '@material-ui/core';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -13,23 +13,23 @@ import InputBase from '@material-ui/core/InputBase';
 import { BlocsContext } from '../store/Context';
 import CategoryDialog from '../components/items/category/index';
 import ProductDialog from '../components/items/product/index';
-
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8]
+import CategoryFilter from '../components/items/filters/CategoryFilter'
+import { StreamBuilder, Snapshot } from '../utils/BlocBuilder/index';
+import { Product } from '../Models/Product';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    position: 'fixed',
-    zIndex: 1,
     top: theme.spacing(10),
     padding: theme.spacing(2),
     backgroundColor: '#536DFE',
-    width: '86.5%'
+    width: '100%',
+    height: 70,
+    margin: '0px 20px 0px 20px'
   },
   fab: {
     position: 'fixed',
     bottom: theme.spacing(2),
-    right: theme.spacing(2),
+    right: theme.spacing(3),
   },
   fabExtras: {
     position: 'fixed',
@@ -61,6 +61,7 @@ const useStyles = makeStyles(theme => ({
     },
     marginLeft: 0,
     width: '100%',
+    maxHeight: 40,
     [theme.breakpoints.up('sm')]: {
       marginLeft: theme.spacing(1),
       width: 'auto',
@@ -88,6 +89,13 @@ const useStyles = makeStyles(theme => ({
         width: 200,
       },
     },
+  },
+  progress: {
+    margin: theme.spacing(10),
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
   },
 }));
 
@@ -151,10 +159,10 @@ const Buttons: FC = () => {
         </Fab>
       </Animation>
       <Animation>
-        <Fab 
-          variant="extended" 
-          aria-label="delete" 
-          className={classes.fabExtras} 
+        <Fab
+          variant="extended"
+          aria-label="delete"
+          className={classes.fabExtras}
           style={{ bottom: theme.spacing(12) }}
           onClick={handleClickOpenProduct}
         >
@@ -170,7 +178,8 @@ const Buttons: FC = () => {
 
 const HomePage: FC = () => {
   localStorage.setItem('route', '/home');
-  const { authBloc } = useContext(BlocsContext);
+  const { authBloc, productBloc } = useContext(BlocsContext);
+  productBloc.load();
   const classes = useStyles();
   const theme = useTheme();
   const [add, addState] = useState(true);
@@ -186,9 +195,10 @@ const HomePage: FC = () => {
     label: 'Add',
   };
   return (
-    <Grid>
+    <Grid container spacing={3}>
       <Paper className={classes.root}>
         <Grid container justify='flex-end' direction='row' wrap='wrap'>
+          <CategoryFilter />
           <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
@@ -204,10 +214,18 @@ const HomePage: FC = () => {
           </div>
         </Grid>
       </Paper>
-      <Grid container justify='space-around' direction='row' wrap='wrap' style={{ display: 'flex', alignItems: 'flex-start', paddingTop: 80 }}>
-        {
-          cards.map((value: number, index: number) => <Card key={index} />)
-        }
+      <Grid container justify='space-around' direction='row' wrap='wrap' style={{ display: 'flex', alignItems: 'flex-start', padding: 20 }}>
+
+        <StreamBuilder
+          stream={productBloc.productStrem()}
+          builder={(snapshot: Snapshot<Product[]>) => {
+            let products: Product[] | undefined = snapshot.data
+            if (products === undefined) {
+              products = []
+            }
+            return products.map((product: Product, index: number) => <Card key={index} product={product} />)
+          }}
+        />
       </Grid>
       {
         authBloc.isAdmin() && (
