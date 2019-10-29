@@ -26,8 +26,8 @@ export class AuthBloc {
     public load = () => {
         const User: User | null = this.provider.getUser();
         if (this.provider.loggedIn() && User != null) {
-            this.sesionStateController.next(true);
             this.userUserController.next(User);
+            this.sesionStateController.next(true);
         }
     }
 
@@ -77,7 +77,7 @@ export class AuthBloc {
         if(user){
             return user.role === "Admin";
         }
-        return false;
+        return this.provider.getRole() === "Admin";
     }
 
     public logout = () => {

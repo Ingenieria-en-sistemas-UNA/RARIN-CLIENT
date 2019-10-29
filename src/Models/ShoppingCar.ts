@@ -1,7 +1,7 @@
 import { Product } from './Product';
+import { ItemCar } from './ItemCar';
 export interface ShoppingCar{
-    id: number;
-    products: Product[]
+    items: ItemCar[]
 }
 
 export class ShoppingCarConvert {

@@ -25,15 +25,14 @@ const App: FC = (props: any) => {
     }
   }
 
-  useEffect(() => {
-    authBloc.load();
-    categoryBloc.load();
+  const load = async () => authBloc.load();
 
+  useEffect(() => {
+    load();
     authBloc.errorsStrem().subscribe(ErrorObserver(authBloc.cleanErrors));
     categoryBloc.errorsStrem().subscribe(ErrorObserver(categoryBloc.cleanErrors));
     productBloc.errorsStrem().subscribe(ErrorObserver(productBloc.cleanErrors));
   }, []);
-  //  const { sesionStateStream }: AuthBloc = this.context;
 
   return <StreamBuilder
     stream={authBloc.sesionStateStream()}

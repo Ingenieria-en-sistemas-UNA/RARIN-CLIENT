@@ -4,7 +4,8 @@ import { useTheme, Paper, Grid, Fab, Zoom, CircularProgress } from '@material-ui
 import { makeStyles, fade } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
-import { green, red } from '@material-ui/core/colors';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { green, red, orange } from '@material-ui/core/colors';
 import clsx from 'clsx';
 import WidgetsIcon from '@material-ui/icons/Widgets';
 import CategoryIcon from '@material-ui/icons/Category';
@@ -16,6 +17,7 @@ import ProductDialog from '../components/items/product/index';
 import CategoryFilter from '../components/items/filters/CategoryFilter'
 import { StreamBuilder, Snapshot } from '../utils/BlocBuilder/index';
 import { Product } from '../Models/Product';
+import { ShoppingCarDialog } from '../components/items/shoppingCar/index';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -48,6 +50,16 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       backgroundColor: red[600],
     },
+  },
+  fabOrange: {
+    color: theme.palette.common.white,
+    backgroundColor: orange[500],
+    '&:hover': {
+      backgroundColor: orange[600],
+    },
+    position: 'fixed',
+    bottom: theme.spacing(2),
+    right: theme.spacing(3),
   },
   extendedIcon: {
     marginRight: theme.spacing(1),
@@ -178,11 +190,15 @@ const Buttons: FC = () => {
 
 const HomePage: FC = () => {
   localStorage.setItem('route', '/home');
-  const { authBloc, productBloc } = useContext(BlocsContext);
-  productBloc.load();
+  const { authBloc, productBloc, categoryBloc } = useContext(BlocsContext);
+  useEffect(() => {
+    categoryBloc.load();
+    productBloc.load();
+  })
   const classes = useStyles();
   const theme = useTheme();
   const [add, addState] = useState(true);
+  const [openShoppingCard, setOpenShoppingCard] = useState(false);
 
   const transitionDuration = {
     enter: theme.transitions.duration.enteringScreen,
@@ -228,7 +244,7 @@ const HomePage: FC = () => {
         />
       </Grid>
       {
-        authBloc.isAdmin() && (
+        authBloc.isAdmin() ? (
           <>
             <Zoom
               key={fab.color}
@@ -255,8 +271,29 @@ const HomePage: FC = () => {
               )
             }
           </>
-        )
+        ) : (
+            <Zoom
+              key='123123123'
+              in
+              timeout={transitionDuration}
+              style={{
+                transitionDelay: `${transitionDuration.exit}ms`,
+              }}
+              unmountOnExit
+            >
+              <Fab
+                aria-label='ShoppingCar'
+                className={classes.fabOrange}
+                color={fab.color}
+                onClick={() => setOpenShoppingCard(true)}
+              >
+                {<ShoppingCartIcon />}
+              </Fab>
+            </Zoom>
+          )
+
       }
+      <ShoppingCarDialog open={openShoppingCard} setOpen={setOpenShoppingCard} />
     </Grid>
   );
 }
