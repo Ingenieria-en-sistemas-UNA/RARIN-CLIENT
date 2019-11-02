@@ -30,14 +30,14 @@ interface FromProps {
 
 const Card = ({ product }: FromProps) => {
   const classes = useStyles();
-  const { authBloc } = useContext(BlocsContext);
+  const { authBloc, productBloc } = useContext(BlocsContext);
 
 
   const [image, setImage] = useState()
 
   const loadImage = async () => {
     try {
-      if (product.imageUrl as string) {
+      if (product.imageUrl) {
         const photo = await fetch(`${product.imageUrl}`).then(response => response.blob());
         setImage(photo)
       }
@@ -49,7 +49,7 @@ const Card = ({ product }: FromProps) => {
   // eslint-disable-next-line
   useEffect(() => {
     loadImage()
-  }, [])
+  }, [productBloc.products])
 
   return (
     <CardMaterial className={classes.card}>

@@ -12,7 +12,7 @@ export class FileProvider extends BaseProvider {
         }
     })
 
-    public upload = async (file: File): Promise<string | null> => {
+    public upload = async (file: File): Promise<string> => {
         try {
             const formData: FormData = new FormData();
             formData.append('file', file);
@@ -24,7 +24,7 @@ export class FileProvider extends BaseProvider {
             console.log(imageUrl);
             return imageUrl;
         } catch (error) {
-            return null
+            return '';
         }
     }
 

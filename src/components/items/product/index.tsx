@@ -86,14 +86,20 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
+interface FromProps {
+    open: boolean;
+    handleClose: React.Dispatch<React.SetStateAction<boolean>>;
+    product?: Product
+}
 
-export default function ProductDialog({ open, handleClose, product = false }: any) {
+export default function ProductDialog({ open, handleClose, product }: FromProps) {
     const classes = useStyles();
     const { productBloc, categoryBloc } = useContext(BlocsContext);
     const { enqueueSnackbar } = useSnackbar();
 
     const [price, setPrice] = useState('');
     const [file, setFile] = useState<boolean | File | Blob>(false);
+    const [isUpdatedFile, setIsUpdatedFile] = useState<boolean>(false);
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -108,13 +114,16 @@ export default function ProductDialog({ open, handleClose, product = false }: an
         setLoading(false);
         setPrice('');
         setName('');
+        setCategoryId(-1);
+        setIsUpdatedFile(false);
         setFile(false);
         setErrors({ noCreated: false });
-        handleClose();
+        handleClose(false);
     }
 
     const loadImage = async () => {
         if (product) {
+            product = product as Product
             try {
                 if (product.imageUrl as string) {
                     const photo = await fetch(`${product.imageUrl}`).then(response => response.blob());
@@ -124,19 +133,26 @@ export default function ProductDialog({ open, handleClose, product = false }: an
                 const photo = await fetch(imageDefault).then(response => response.blob())
                 setFile(photo)
             }
-            setPrice(product.price);
-            setName(product.name);
-            setCategoryId(product.categoryId);
         }
     }
     // eslint-disable-next-line
     useEffect(() => {
-        loadImage()
-    }, [])
+        if (product) {
+            product = product as Product
+            setPrice(product.price + '');
+            setName(product.name);
+            setCategoryId(product.categoryId);
+        }
+        if (open) {
+            loadImage()
+        }
+    }, [open])
+    
     const handleChangeFile = (e: any) => {
         const { files } = e.target;
         const [file] = files;
         setFile(file as File);
+        setIsUpdatedFile(true);
     }
 
     const handleButtonClick = async () => {
@@ -153,8 +169,8 @@ export default function ProductDialog({ open, handleClose, product = false }: an
                     if (!product) {
                         success = await productBloc.add(productValidated, file as File);
                     } else {
-                        if (file as Blob) {
-                            success = await productBloc.edit({ id: product.id, ...productValidated });
+                        if (!isUpdatedFile) {
+                            success = await productBloc.edit({ id: product.id, imageUrl: product.imageUrl as string, ...productValidated });
                         } else {
                             success = await productBloc.edit({ id: product.id, ...productValidated }, file as File);
                         }

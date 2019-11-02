@@ -47,8 +47,9 @@ export class ProductsProvider extends BaseProvider {
     }
 
     update = async (product: Product): Promise<ResponseProduct> => {
+        console.log({ product });
         try {
-            const response: Response = await fetch(`${this._baseUrlApi}/api/products`, {
+            const response: Response = await fetch(`${this._baseUrlApi}/api/products/${product.id}`, {
                 method: 'PUT',
                 body: JSON.stringify(product),
                 headers: {
@@ -59,8 +60,8 @@ export class ProductsProvider extends BaseProvider {
             }
             );
             if (response.status >= 200 && response.status < 300) {
-                const productResponse = await response.json();
-                return { ok: true, product: productResponse };
+                //await response.json();
+                return { ok: true, product };
             }
             throw Error('Algo ha ocurrido')
         } catch (error) {

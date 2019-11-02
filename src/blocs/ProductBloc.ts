@@ -18,7 +18,7 @@ export class ProductBloc {
     private errorsController = new BehaviorSubject<Error[]>([]);
     private productsController = new Subject<Product[]>();
 
-    private products: Product[];
+    public products: Product[];
 
     public loadingStrem = () => this.loadingController.asObservable()
     public errorsStrem = () => this.errorsController.asObservable()
@@ -116,13 +116,13 @@ export class ProductBloc {
         this.loadingController.next(true);
         let created: boolean = false;
         let errors: Error[] = [];
-        let imageUrl: string | null = null;
+        let imageUrl = product.imageUrl;
         if (file) {
             imageUrl = await this.fileProvider.upload(file);
         }
 
-        if (imageUrl || !file) {
-            product.imageUrl = imageUrl || '';
+        if (imageUrl !== '' || !file) {
+            product.imageUrl = imageUrl;
             const response: ResponseProduct = await this.productProvider.update(product);
             if (response.ok) {
                 if (response.product) {

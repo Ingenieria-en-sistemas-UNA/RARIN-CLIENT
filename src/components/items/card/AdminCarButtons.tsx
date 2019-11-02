@@ -31,48 +31,48 @@ interface FromProps {
 }
 
 export const AdminCarButtons: FC<FromProps> = ({ product }) => {
-    const classes = useStyles();
-    const { productBloc } = useContext(BlocsContext);
+  const classes = useStyles();
+  const { productBloc } = useContext(BlocsContext);
 
-    const [open, setOpen] = useState(false);
-    const fabAdd: any =
-    {
-        color: 'inherit',
-        className: classes.fabGrey,
-        icon: <EditIcon />,
-        label: 'Edit',
-    };
-    const fabRemove: any =
-    {
-        color: 'inherit',
-        className: classes.fabRed,
-        icon: <DeleteForeverIcon />,
-        label: 'Delete',
-    };
+  const [open, setOpen] = useState(false);
+  const fabAdd: any =
+  {
+    color: 'inherit',
+    className: classes.fabGrey,
+    icon: <EditIcon />,
+    label: 'Edit',
+  };
+  const fabRemove: any =
+  {
+    color: 'inherit',
+    className: classes.fabRed,
+    icon: <DeleteForeverIcon />,
+    label: 'Delete',
+  };
 
-    return (
-        <>
-            <Fab
-                size='small'
-                aria-label={fabRemove.label}
-                className={fabRemove.className}
-                color={fabRemove.color}
-                onClick={() => {
-                    productBloc.remove(product.id as number)
-                }}
-            >
-                {fabRemove.icon}
-            </Fab>
-            <Fab
-                size='small'
-                aria-label={fabAdd.label}
-                className={fabAdd.className}
-                color={fabAdd.color}
-                onClick={() => setOpen(true)}
-            >
-                {fabAdd.icon}
-            </Fab>
-            <ProductDialog open={open} handleClose={setOpen} product={product} />
-        </>
-    )
+  return (
+    <>
+      <Fab
+        size='small'
+        aria-label={fabRemove.label}
+        className={fabRemove.className}
+        color={fabRemove.color}
+        onClick={() => {
+          productBloc.remove(product.id as number)
+        }}
+      >
+        {fabRemove.icon}
+      </Fab>
+      <Fab
+        size='small'
+        aria-label={fabAdd.label}
+        className={fabAdd.className}
+        color={fabAdd.color}
+        onClick={() => setOpen(true)}
+      >
+        {fabAdd.icon}
+      </Fab>
+      <ProductDialog open={open} handleClose={setOpen} product={product} />
+    </>
+  )
 }
