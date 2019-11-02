@@ -239,7 +239,11 @@ const HomePage: FC = () => {
             if (!snapshot.hasData) {
               return <CircularProgress variant="indeterminate" className={classes.progress} />
             }
-            return products.map((product: Product, index: number) => <Card key={index} product={product} />)
+            return products.length > 0 ? (
+              products.map((product: Product, index: number) => <Card key={index} product={product} />)
+            ) : (
+              <p>No hay productos</p>
+            )
           }}
         />
       </Grid>

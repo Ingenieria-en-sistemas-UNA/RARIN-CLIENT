@@ -83,6 +83,73 @@ export class ProductBloc {
         return created
     }
 
+    public remove = async (id: number): Promise<boolean> => {
+        this.loadingController.next(true);
+        let created: boolean = false;
+        let errors: Error[] = [];
+        const response: ResponseProduct = await this.productProvider.delete(id);
+        if (response.ok) {
+            if (response.product) {
+                const product = response.product as Product;
+                const products = this.products.filter((value) => value.id !== product.id);
+                this.productsController.next(products);
+                created = true;
+            } else {
+                errors = [{ message: 'Algo ha ocurrido con el producto' }];
+            }
+        } else {
+            if (response.errors) {
+                errors = response.errors.map((message: string): Error => ({ message }));
+            } else {
+                errors = [{ message: 'Algo ha ocurrido' }];
+            }
+        }
+
+        if (errors.length > 0) {
+            this.errorsController.next(errors);
+        }
+        this.loadingController.next(false)
+        return created
+    }
+
+    public edit = async (product: Product, file?: File): Promise<boolean> => {
+        this.loadingController.next(true);
+        let created: boolean = false;
+        let errors: Error[] = [];
+        let imageUrl: string | null = null;
+        if (file) {
+            imageUrl = await this.fileProvider.upload(file);
+        }
+
+        if (imageUrl || !file) {
+            product.imageUrl = imageUrl || '';
+            const response: ResponseProduct = await this.productProvider.update(product);
+            if (response.ok) {
+                if (response.product) {
+                    const product = response.product as Product;
+                    const products = this.products.filter((value) => value.id !== product.id);
+                    this.productsController.next([product, ...products]);
+                    created = true;
+                } else {
+                    errors = [{ message: 'Algo ha ocurrido con el producto' }];
+                }
+            } else {
+                if (response.errors) {
+                    errors = response.errors.map((message: string): Error => ({ message }));
+                } else {
+                    errors = [{ message: 'Algo ha ocurrido' }];
+                }
+            }
+        } else {
+            errors = [{ message: 'Error al intentar subir la imagen' }];
+        }
+        if (errors.length > 0) {
+            this.errorsController.next(errors);
+        }
+        this.loadingController.next(false)
+        return created
+    }
+
     public cleanErrors = () => {
         this.errorsController.next([]);
     }

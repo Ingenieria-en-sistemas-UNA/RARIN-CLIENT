@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -25,6 +25,8 @@ import { ProductValidator } from '../../../utils/validators/ProductValidator';
 import { StreamBuilder, Snapshot } from '../../../utils/BlocBuilder';
 import { Category } from '../../../Models/Category';
 import { FormControl, Select } from '@material-ui/core';
+import imageDefault from '../../../assets/image/default.png'
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -85,14 +87,13 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 
-export default function ProductDialog({ open, handleClose, product }: any) {
+export default function ProductDialog({ open, handleClose, product = false }: any) {
     const classes = useStyles();
     const { productBloc, categoryBloc } = useContext(BlocsContext);
     const { enqueueSnackbar } = useSnackbar();
 
     const [price, setPrice] = useState('');
-    const [file, setFile] = useState<boolean | File>(false);
-    const [stock, setStock] = useState('');
+    const [file, setFile] = useState<boolean | File | Blob>(false);
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -106,12 +107,32 @@ export default function ProductDialog({ open, handleClose, product }: any) {
         setSuccess(false);
         setLoading(false);
         setPrice('');
-        setStock('');
         setName('');
         setFile(false);
         setErrors({ noCreated: false });
         handleClose();
     }
+
+    const loadImage = async () => {
+        if (product) {
+            try {
+                if (product.imageUrl as string) {
+                    const photo = await fetch(`${product.imageUrl}`).then(response => response.blob());
+                    setFile(photo)
+                }
+            } catch (error) {
+                const photo = await fetch(imageDefault).then(response => response.blob())
+                setFile(photo)
+            }
+            setPrice(product.price);
+            setName(product.name);
+            setCategoryId(product.categoryId);
+        }
+    }
+    // eslint-disable-next-line
+    useEffect(() => {
+        loadImage()
+    }, [])
     const handleChangeFile = (e: any) => {
         const { files } = e.target;
         const [file] = files;
@@ -122,30 +143,39 @@ export default function ProductDialog({ open, handleClose, product }: any) {
         if (!loading) {
             setSuccess(false);
             setLoading(true);
-            const sinErrors = { name, price, stock, categoryId };
+            const sinErrors = { name, price, categoryId };
             const result = ProductValidator(sinErrors);
 
             if (!Object.keys(result).length) {
                 try {
-                    const product: Product = { name, price: Number(price), stock: Number(stock), categoryId }
-                    const created = await productBloc.add(product, file as File);
+                    let success = false;
+                    const productValidated: Product = { name, price: Number(price), categoryId }
+                    if (!product) {
+                        success = await productBloc.add(productValidated, file as File);
+                    } else {
+                        if (file as Blob) {
+                            success = await productBloc.edit({ id: product.id, ...productValidated });
+                        } else {
+                            success = await productBloc.edit({ id: product.id, ...productValidated }, file as File);
+                        }
+                    }
                     setTimeout(() => {
                         setLoading(false);
                     }, 1000);
-                    if (created) {
-                        enqueueSnackbar('Se ha creado un producto', { variant: 'success' })
+                    if (success) {
+                        enqueueSnackbar(`Se ha ${product ? 'actualizado' : 'creado'} un producto`, { variant: 'success' })
                         setSuccess(true);
                         setTimeout(() => {
                             handleButtonClose()
                         }, 500);
                     } else {
-                        setErrors({ noCreated: true });
+                        setErrors({ noSuccess: true });
                         setTimeout(() => {
-                            setErrors({ noCreated: false });
+                            setErrors({ noSuccess: false });
                         }, 2000);
                     }
                 } catch ({ message }) {
-                    enqueueSnackbar('Algo ocurrio al intentar crear el producto', { variant: 'error' })
+                    enqueueSnackbar(`Algo ocurrio al intentar ${product ? 'actualizar' : 'crear'} el producto`, { variant: 'error' })
                 }
             } else {
                 setErrors(result);
@@ -155,13 +185,17 @@ export default function ProductDialog({ open, handleClose, product }: any) {
 
     return (
         <Dialog open={open} onClose={handleButtonClose} aria-labelledby='form-dialog-title'>
-            <DialogTitle id='form-dialog-title'>Crear Producto</DialogTitle>
+            <DialogTitle id='form-dialog-title'>
+                {
+                    product ? 'Editar Producto' : 'Crear Producto'
+                }
+            </DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     Los productos son los articulos que se van a vender en la tienda online, se preciso con los datos
                 </DialogContentText>
                 <Grid container direction='row' spacing={3}>
-                    <Grid item xs={6}>
+                    <Grid item xs={9}>
                         <TextField
                             autoFocus
                             value={name}
@@ -182,17 +216,6 @@ export default function ProductDialog({ open, handleClose, product }: any) {
                             onChange={e => setPrice(e.target.value)}
                             helperText={errors.price ? errors.price : ''}
                             label='Precio'
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={3}>
-                        <TextField
-                            margin='dense'
-                            id='stock'
-                            value={stock}
-                            onChange={e => setStock(e.target.value)}
-                            helperText={errors.stock ? errors.stock : ''}
-                            label='Inventario'
                             fullWidth
                         />
                     </Grid>
@@ -269,9 +292,9 @@ export default function ProductDialog({ open, handleClose, product }: any) {
                         color="primary"
                         className={buttonClassname}
                         onClick={handleButtonClick}
-                        disabled={file === false || success || errors.noCreated}
+                        disabled={file === false || success || errors.noSuccess}
                     >
-                        {!errors.noCreated ? success ? <CheckIcon /> : <SaveIcon /> : <ErrorIcon />}
+                        {!errors.noSuccess ? success ? <CheckIcon /> : <SaveIcon /> : <ErrorIcon />}
                     </Fab>
                     {loading && <CircularProgress size={68} className={classes.fabProgress} />}
                 </div>

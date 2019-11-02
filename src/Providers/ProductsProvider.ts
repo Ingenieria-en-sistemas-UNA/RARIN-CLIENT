@@ -25,34 +25,46 @@ export class ProductsProvider extends BaseProvider {
         }
     }
 
-    delete = async (id: number) => {
+    delete = async (id: number): Promise<ResponseProduct> => {
         try {
             const response: Response = await fetch(`${this._baseUrlApi}/api/products/${id}`, {
                 method: 'DELETE',
-            });
-            if (response.status >= 200 && response.status < 300) {
-                const products = await response.json();
-                console.log({ products })
+                headers: {
+                    'Authorization': `Bearer ${this.provider.getToken()}`,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
             }
-        }
-        catch (error) {
-
+            );
+            if (response.status >= 200 && response.status < 300) {
+                const productResponse = await response.json();
+                return { ok: true, product: productResponse };
+            }
+            throw Error('Algo ha ocurrido')
+        } catch (error) {
+            return { ok: false, errors: [error.message] }
         }
     }
 
-    update = async (product: Product) => {
+    update = async (product: Product): Promise<ResponseProduct> => {
         try {
             const response: Response = await fetch(`${this._baseUrlApi}/api/products`, {
                 method: 'PUT',
-                body: JSON.stringify(product)
-            });
-            if (response.status >= 200 && response.status < 300) {
-                const products = await response.json();
-                console.log({ products })
+                body: JSON.stringify(product),
+                headers: {
+                    'Authorization': `Bearer ${this.provider.getToken()}`,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
             }
-
+            );
+            if (response.status >= 200 && response.status < 300) {
+                const productResponse = await response.json();
+                return { ok: true, product: productResponse };
+            }
+            throw Error('Algo ha ocurrido')
         } catch (error) {
-
+            return { ok: false, errors: [error.message] }
         }
     }
 
