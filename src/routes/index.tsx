@@ -7,6 +7,7 @@ import PrivateRoute from './routes_auth/PrivateRoute';
 import Dashboard from '../pages/Dashboard';
 import { History } from 'history';
 import SignUpPage from '../pages/SignUpPage';
+import Reports from '../pages/Reports';
 
 interface FromProps {
     sesionState: boolean,
@@ -20,6 +21,8 @@ export const AppRoutes: FC<FromProps> = ({ sesionState, history }) =>
             <PrivateRoute exact path="/dashboard" state={sesionState} component={Dashboard} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={SignUpPage} />
+            <PrivateRoute exact path="/reports" state={sesionState} component={Reports} />
+
             <Redirect to='/'/>
         </Switch>
     </Layout>

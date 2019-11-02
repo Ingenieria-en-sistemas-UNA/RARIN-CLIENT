@@ -11,6 +11,8 @@ import { secondaryListItems } from '../../dashboard/listItems';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListItemText from '@material-ui/core/ListItemText';
 import { History } from 'history';
+import Reports from '../../../pages/Reports';
+
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) => ({
@@ -59,6 +61,10 @@ export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
     const onGoDashboar = () => {
         history.push('/dashboard')
     }
+
+    const onGoReports =()=>{
+        history.push('/reports')
+    }
     return (
         <DrawerMaterial
             variant="permanent"
@@ -82,6 +88,15 @@ export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
                         </ListItemIcon>
                         <ListItemText primary="Dashboard" />
                     </ListItem>
+
+                    <ListItem button onClick={onGoReports}>
+                        <ListItemIcon>
+                        <BarChartIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Reports" />
+                    </ListItem>
+                        
+                      
                     <ListItem button>
                         <ListItemIcon>
                             <ShoppingCartIcon />
@@ -94,12 +109,7 @@ export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
                         </ListItemIcon>
                         <ListItemText primary="Mi Perfil" />
                     </ListItem>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <BarChartIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Reports" />
-                    </ListItem>
+                 
                     <ListItem button>
                         <ListItemIcon>
                             <LayersIcon />
