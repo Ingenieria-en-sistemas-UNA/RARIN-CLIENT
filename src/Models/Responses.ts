@@ -1,6 +1,7 @@
 import { User } from './User';
 import { Category } from './Category';
 import { Product } from './Product';
+import { Voucher } from './Voucher';
 export interface ResponseUser {
     ok: boolean,
     errors?: Array<string>,
@@ -18,4 +19,11 @@ export interface ResponseProduct {
     errors?: Array<string>;
     product?: Product;
     products?: Product[];
+}
+
+export interface ResponseVoucher {
+    ok: boolean;
+    errors?: Array<string>;
+    voucher?: Voucher;
+    vouchers?: Voucher[];
 }

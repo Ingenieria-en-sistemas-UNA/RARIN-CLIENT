@@ -4,6 +4,7 @@ import { AuthBloc } from '../blocs/AuthBloc';
 import { CategoryBloc } from '../blocs/CategoryBloc';
 import { ProductBloc } from '../blocs/ProductBloc';
 import { ShoppingCarBloc } from '../blocs/ShoppingCarBloc';
+import { VoucherBloc } from '../blocs/VoucherBloc';
 
 
 export class Blocs {
@@ -13,6 +14,7 @@ export class Blocs {
     public categoryBloc: CategoryBloc = new CategoryBloc();
     public productBloc: ProductBloc = new ProductBloc();
     public shoppingCarBloc: ShoppingCarBloc = new ShoppingCarBloc();
+    public voucherBloc: VoucherBloc = new VoucherBloc();
 
 }
 

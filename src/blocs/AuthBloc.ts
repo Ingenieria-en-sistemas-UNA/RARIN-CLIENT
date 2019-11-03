@@ -31,6 +31,10 @@ export class AuthBloc {
         }
     }
 
+    public getClient = (): Client => {
+        return (this.userUserController.value as User)!.client;
+    }
+
     public login = async (email: string, password: string): Promise<boolean> => {
         this.loadingController.next(true);
         const response: ResponseUser = await this.provider.login(email, password);
