@@ -1,8 +1,11 @@
-import React, { useState, FC } from 'react'
+import React, { useState, FC, useContext, useEffect } from 'react'
 import { useTheme, Zoom, Fab, Theme, makeStyles } from '@material-ui/core';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import { ShoppingCarDialog } from '../shoppingCar/index';
 import { orange } from '@material-ui/core/colors';
+import { BlocsContext } from '../../../store/Context';
+import { StreamBuilder, Snapshot } from '../../../utils/BlocBuilder/index';
+import { ShoppingCar } from '../../../Models/ShoppingCar';
 
 const useStyles = makeStyles((theme: Theme) => ({
     fabOrange: {
@@ -21,6 +24,11 @@ export const CarButton: FC = () => {
 
     const classes = useStyles();
     const theme = useTheme();
+    const { shoppingCarBloc } = useContext(BlocsContext);
+    const [added, setAdded] = useState(true);
+    useEffect(() => {
+        shoppingCarBloc.shoppingCartStream().subscribe((shopingCar) => setAdded(!added))
+    }, []);
     const [openShoppingCard, setOpenShoppingCard] = useState(false);
 
     const transitionDuration = {
@@ -38,14 +46,23 @@ export const CarButton: FC = () => {
                 }}
                 unmountOnExit
             >
-                <Fab
-                    aria-label='ShoppingCar'
-                    className={classes.fabOrange}
-                    color='inherit'
-                    onClick={() => setOpenShoppingCard(true)}
-                >
-                    {<ShoppingCartIcon />}
-                </Fab>
+                <StreamBuilder
+                    stream={shoppingCarBloc.shoppingCartStream()}
+                    builder={(snapshot: Snapshot<ShoppingCar>) => {
+                        const { items } = snapshot.data as ShoppingCar || { items: [] };
+                        return (
+                            <Fab
+                                aria-label='ShoppingCar'
+                                className={classes.fabOrange}
+                                color='inherit'
+                                disabled={items.length === 0}
+                                onClick={() => setOpenShoppingCard(true)}
+                            >
+                                {<ShoppingCartIcon />}
+                            </Fab>
+                        )
+                    }}
+                />
             </Zoom>
             <ShoppingCarDialog open={openShoppingCard} setOpen={setOpenShoppingCard} />
         </>

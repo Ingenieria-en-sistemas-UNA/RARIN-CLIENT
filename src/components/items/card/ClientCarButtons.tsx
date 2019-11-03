@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react'
+import React, { FC, useContext, useState, useEffect } from 'react'
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import { makeStyles, createStyles } from '@material-ui/styles';
@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     fabRed: {
       color: theme.palette.common.white,
+      marginRight: 10,
       backgroundColor: red[500],
       '&:hover': {
         backgroundColor: red[600],
@@ -33,7 +34,13 @@ export const ClientCarButtons: FC<FromProps> = ({ product }) => {
     const classes = useStyles();
     const { shoppingCarBloc } = useContext(BlocsContext);
 
+
+
     const [added, setAdded] = useState(true);
+
+    useEffect(() => {
+      shoppingCarBloc.shoppingCartStream().subscribe((shopingCar) => setAdded(!added))
+    }, []);
 
     const fabAdd: any =
     {

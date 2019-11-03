@@ -17,6 +17,7 @@ import { BlocsContext } from '../../../store/Context';
 import { StreamBuilder, Snapshot } from '../../../utils/BlocBuilder/index';
 import { ShoppingCar } from '../../../Models/ShoppingCar';
 import { ItemCar } from '../../../Models/ItemCar';
+import { ClientCarButtons } from '../card/ClientCarButtons';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -68,8 +69,9 @@ export const ShoppingCarDialog = ({ open, setOpen }: any) => {
             return items.map((item, index) => {
               return (
                 <div key={`${index}-shopping`}>
-                  <ListItem  button>
+                  <ListItem button>
                     <ListItemText primary={item.product.name} secondary={`Precio: $${item.product.price}    cantidad: ${item.cant}`} />
+                    <ClientCarButtons product={item.product} />
                   </ListItem>
                   <Divider />
                 </div>
