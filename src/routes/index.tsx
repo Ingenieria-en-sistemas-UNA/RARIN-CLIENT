@@ -8,7 +8,7 @@ import Dashboard from '../pages/Dashboard';
 import { History } from 'history';
 import SignUpPage from '../pages/SignUpPage';
 import Orders from '../pages/OrderPage';
-import Reports from '../pages/Reports';
+import Reports from '../pages/ReportsPage';
 
 interface FromProps {
     sesionState: boolean,

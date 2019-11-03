@@ -11,8 +11,6 @@ import { secondaryListItems } from '../../dashboard/listItems';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListItemText from '@material-ui/core/ListItemText';
 import { History } from 'history';
-import Reports from '../../../pages/Reports';
-
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) => ({
@@ -64,7 +62,7 @@ export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
     
     const onGoOrders = () => {
         history.push('/orders')
-
+    }
     const onGoReports =()=>{
         history.push('/reports')
     }
