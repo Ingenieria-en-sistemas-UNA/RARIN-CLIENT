@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center'
-},
+  },
   progress: {
     margin: theme.spacing(10),
   },
@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(1),
     textAlign: 'center'
-},
+  },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
@@ -206,8 +206,8 @@ const SignUpPage: FC<FromProps> = ({ history }) => {
                   </Button>
                   <Grid container justify="center">
                     <Grid item>
-                      <Button onClick={()=>history.push("/login")}>
-                       Ya tienes una cuenta? Inicia sesion aquí
+                      <Button onClick={() => history.push("/login")}>
+                        Ya tienes una cuenta? Inicia sesion aquí
                       </Button>
                     </Grid>
                   </Grid>

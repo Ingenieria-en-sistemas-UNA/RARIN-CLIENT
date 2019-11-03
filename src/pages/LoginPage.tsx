@@ -126,9 +126,9 @@ const LoginPage: FC<FromProps> = ({ history }) => {
                                 >
                                     Sign In
                                             </Button>
-                                <Grid container justify="center">                                  
+                                <Grid container justify="center">
                                     <Grid item>
-                                        <Button onClick={()=>history.push("/signup")}>
+                                        <Button onClick={() => history.push("/signup")}>
                                             ¿No tienes una cuenta? Registrate aquí
                                         </Button>
                                     </Grid>

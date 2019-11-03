@@ -33,7 +33,7 @@ const Card = ({ product }: FromProps) => {
   const { authBloc, productBloc } = useContext(BlocsContext);
 
 
-  const [image, setImage] = useState()
+  const [image, setImage] = useState<Blob | boolean>(false)
 
   const loadImage = async () => {
     try {
@@ -48,7 +48,7 @@ const Card = ({ product }: FromProps) => {
   }
   // eslint-disable-next-line
   useEffect(() => {
-    loadImage()
+      loadImage()
   }, [productBloc.products])
 
   return (

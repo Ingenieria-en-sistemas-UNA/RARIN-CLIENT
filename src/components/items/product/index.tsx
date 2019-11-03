@@ -211,7 +211,7 @@ export default function ProductDialog({ open, handleClose, product }: FromProps)
                     Los productos son los articulos que se van a vender en la tienda online, se preciso con los datos
                 </DialogContentText>
                 <Grid container direction='row' spacing={3}>
-                    <Grid item xs={9}>
+                    <Grid item xs={8}>
                         <TextField
                             autoFocus
                             value={name}
@@ -224,7 +224,7 @@ export default function ProductDialog({ open, handleClose, product }: FromProps)
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={4}>
                         <TextField
                             margin='dense'
                             id='price'

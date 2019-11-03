@@ -67,12 +67,12 @@ export const ShoppingCarDialog = ({ open, setOpen }: any) => {
             }
             return items.map((item, index) => {
               return (
-                <>
-                  <ListItem key={index} button>
+                <div key={`${index}-shopping`}>
+                  <ListItem  button>
                     <ListItemText primary={item.product.name} secondary={`Precio: $${item.product.price}    cantidad: ${item.cant}`} />
                   </ListItem>
                   <Divider />
-                </>
+                </div>
               )
             })
           }}
