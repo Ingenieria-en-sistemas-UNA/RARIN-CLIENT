@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     title: {
       marginLeft: theme.spacing(2),
+      color: 'white',
       flex: 1,
     },
   }),
@@ -38,6 +39,12 @@ const Transition = React.forwardRef<unknown, TransitionProps>(function Transitio
 export const ShoppingCarDialog = ({ open, setOpen }: any) => {
   const classes = useStyles();
   const { shoppingCarBloc } = useContext(BlocsContext);
+
+  const [added, setAdded] = useState(true);
+  useEffect(() => {
+    shoppingCarBloc.shoppingCartStream().subscribe((shopingCar) => setAdded(!added))
+  }, []);
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -50,36 +57,59 @@ export const ShoppingCarDialog = ({ open, setOpen }: any) => {
             <CloseIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Sound
+            Carrito de Compras
             </Typography>
-          <Button autoFocus color="inherit" onClick={handleClose}>
-            save
+          <Button autoFocus color="inherit" onClick={handleClose} style={{ color: 'white' }}>
+            Comprar
             </Button>
         </Toolbar>
       </AppBar>
-      <List>
-        <StreamBuilder
-          stream={shoppingCarBloc.shoppingCartStream()}
-          builder={(snapshot: Snapshot<ShoppingCar>) => {
-            const shoppingCar = snapshot.data;
-            let items: ItemCar[] = [];
-            if (shoppingCar) {
-              items = shoppingCar.items;
-            }
-            return items.map((item, index) => {
+      <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+        <List style={{ flex: 0.9, height: '100vh' }}>
+          <StreamBuilder
+            stream={shoppingCarBloc.shoppingCartStream()}
+            builder={(snapshot: Snapshot<ShoppingCar>) => {
+              const shoppingCar = snapshot.data;
+              let items: ItemCar[] = [];
+              if (shoppingCar) {
+                items = shoppingCar.items;
+              }
+              return items.map((item, index) => {
+                return (
+                  <div key={`${index}-shopping`}>
+                    <ListItem>
+                      <ListItemText primary={item.product.name} secondary={`Precio: $${item.product.price}    cantidad: ${item.cant}`} />
+                      <ClientCarButtons product={item.product} />
+                    </ListItem>
+                    <Divider />
+                  </div>
+                )
+              })
+            }}
+          />
+        </List>
+        <div style={{ flex: 0.1 }}>
+          <Divider />
+          <StreamBuilder
+            stream={shoppingCarBloc.shoppingCartStream()}
+            builder={(snapshot: Snapshot<ShoppingCar>) => {
+              const shoppingCar = snapshot.data;
+              let items: ItemCar[] = [];
+              if (shoppingCar) {
+                items = shoppingCar.items;
+              }
+              let total = 0;
+              items.forEach(({ product: { price }, cant }) => total += price * cant);
               return (
-                <div key={`${index}-shopping`}>
-                  <ListItem button>
-                    <ListItemText primary={item.product.name} secondary={`Precio: $${item.product.price}    cantidad: ${item.cant}`} />
-                    <ClientCarButtons product={item.product} />
-                  </ListItem>
-                  <Divider />
-                </div>
+                <Typography key='shoppingCard-Total' variant='subtitle1' style={{ padding: 20 }}>
+                  Total: ${total}
+                </Typography>
               )
-            })
-          }}
-        />
-      </List>
+            }}
+          />
+
+        </div>
+      </div>
     </Dialog>
   );
 }
