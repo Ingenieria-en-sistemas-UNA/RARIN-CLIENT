@@ -59,6 +59,10 @@ export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
     const onGoDashboar = () => {
         history.push('/dashboard')
     }
+
+    const onGoProfile = () =>{
+        history.push('/profile')
+    }
     
     const onGoOrders = () => {
         history.push('/orders')
@@ -101,7 +105,7 @@ export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
                         </ListItemIcon>
                         <ListItemText primary="Reports" />
                     </ListItem>
-                    <ListItem button>
+                    <ListItem button onClick={onGoProfile}>
                         <ListItemIcon>
                             <PeopleIcon />
                         </ListItemIcon>
