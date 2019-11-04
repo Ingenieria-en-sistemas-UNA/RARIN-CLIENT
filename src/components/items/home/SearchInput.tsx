@@ -1,7 +1,8 @@
-import React, { FC } from 'react'
+import React, { FC, useContext, useState, useEffect } from 'react'
 import { Theme, makeStyles, fade } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
+import { BlocsContext } from '../../../store/Context';
 
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -47,6 +48,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const SearchInput: FC = () => {
     const classes = useStyles();
+    const { productBloc } = useContext(BlocsContext);
+    const [text, setText] = useState("");
+    useEffect(()=> {
+        if(text === ""){
+            productBloc.load();
+        } else {
+            productBloc.loadByText(text);
+        }
+    }, [text])
     return (
         <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -54,6 +64,8 @@ export const SearchInput: FC = () => {
             </div>
             <InputBase
                 placeholder="Buscar…"
+                value={text}
+                onChange={e => setText(e.target.value)}
                 classes={{
                     root: classes.inputRoot,
                     input: classes.inputInput,

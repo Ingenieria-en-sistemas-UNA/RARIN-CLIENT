@@ -47,6 +47,51 @@ export class ProductBloc {
         this.loadingController.next(false)
     }
 
+    public loadByCategory = async (id: number) => {
+        this.loadingController.next(true);
+        const response: ResponseProduct = await this.productProvider.getByCategory(id);
+        let errors: Error[] = [];
+        if (response.ok) {
+            if (response.products) {
+                this.productsController.next(response.products);
+            } else {
+                errors = [{ message: 'Algo ha ocurrido con el producto' }];
+            }
+        } else {
+            if (response.errors) {
+                errors = response.errors.map((message: string): Error => ({ message }));
+            } else {
+                errors = [{ message: 'Algo ha ocurrido' }];
+            }
+        }
+        if (errors.length > 0) {
+            this.errorsController.next(errors);
+        }
+        this.loadingController.next(false)
+    }
+    public loadByText = async (text: string) => {
+        this.loadingController.next(true);
+        const response: ResponseProduct = await this.productProvider.getByText(text);
+        let errors: Error[] = [];
+        if (response.ok) {
+            if (response.products) {
+                this.productsController.next(response.products);
+            } else {
+                errors = [{ message: 'Algo ha ocurrido con el producto' }];
+            }
+        } else {
+            if (response.errors) {
+                errors = response.errors.map((message: string): Error => ({ message }));
+            } else {
+                errors = [{ message: 'Algo ha ocurrido' }];
+            }
+        }
+        if (errors.length > 0) {
+            this.errorsController.next(errors);
+        }
+        this.loadingController.next(false)
+    }
+
     public add = async (product: Product, file: File): Promise<boolean> => {
         this.loadingController.next(true);
         let created: boolean = false;

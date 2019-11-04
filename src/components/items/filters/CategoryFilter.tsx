@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { FormControl, Select, makeStyles } from '@material-ui/core'
 import { Category } from '../../../Models/Category';
 import { BlocsContext } from '../../../store/Context';
@@ -14,8 +14,15 @@ const useStyles = makeStyles(theme => ({
 
 export default (props: any) => {
     const classes = useStyles();
-    const { categoryBloc } = useContext(BlocsContext);
+    const { categoryBloc, productBloc } = useContext(BlocsContext);
     const [categoryId, setCategoryId] = useState<number>(-1);
+    useEffect(()=> {
+        if(categoryId === -1){
+            productBloc.load();
+        } else {
+            productBloc.loadByCategory(categoryId);
+        }
+    }, [categoryId])
     return (
         <StreamBuilder
             stream={categoryBloc.categoriesStrem()}
@@ -39,7 +46,7 @@ export default (props: any) => {
                                     id: 'category-native-simple',
                                 }}
                             >
-                                <option value="">Todas</option>
+                                <option value={-1}>Todas</option>
                                 {
                                     categories.map((category, index) => <option key={index} value={category.id}>{category.name}</option>)
                                 }

@@ -24,6 +24,38 @@ export class ProductsProvider extends BaseProvider {
             return { ok: false, errors: [error.message] }
         }
     }
+    getByCategory = async (id: number): Promise<ResponseProduct> => {
+        try {
+            const response: Response = await fetch(`${this._baseUrlApi}/api/products/byCategory/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${this.provider.getToken()}`
+                }
+            });
+            if (response.status >= 200 && response.status < 300) {
+                const products = await response.json();
+                return { ok: true, products };
+            }
+            throw Error('Algo ha ocurrido')
+        } catch (error) {
+            return { ok: false, errors: [error.message] }
+        }
+    }
+    getByText = async (text: string): Promise<ResponseProduct> => {
+        try {
+            const response: Response = await fetch(`${this._baseUrlApi}/api/products/byText/${text}`, {
+                headers: {
+                    'Authorization': `Bearer ${this.provider.getToken()}`
+                }
+            });
+            if (response.status >= 200 && response.status < 300) {
+                const products = await response.json();
+                return { ok: true, products };
+            }
+            throw Error('Algo ha ocurrido')
+        } catch (error) {
+            return { ok: false, errors: [error.message] }
+        }
+    }
 
     delete = async (id: number): Promise<ResponseProduct> => {
         try {
