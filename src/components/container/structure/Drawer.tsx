@@ -1,15 +1,15 @@
-import React, { FC } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Drawer as DrawerMaterial, IconButton, Divider, List, ListItem, ListItemIcon } from '@material-ui/core';
 import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
-import LayersIcon from '@material-ui/icons/Layers';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { secondaryListItems } from '../../dashboard/listItems';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListItemText from '@material-ui/core/ListItemText';
+import HomeIcon from '@material-ui/icons/Home';
 import { History } from 'history';
 
 const drawerWidth = 240;
@@ -56,20 +56,27 @@ interface FromProps {
 
 export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
     const classes = useStyles();
+    const [route, setRoute] = useState(localStorage.getItem('route') || '/');
+    const onGoHome = () => {
+        setRoute('/');
+    }
     const onGoDashboar = () => {
-        history.push('/dashboard')
+        history.push(route)
+        setRoute('/dashboard');
     }
-    
     const onGoOrders = () => {
-        history.push('/orders')
+        setRoute('/orders');
     }
-    const onGoReports =()=>{
-        history.push('/reports')
+    const onGoReports = () => {
+        setRoute('/reports');
     }
+    useEffect(() => {
+        history.push(route);
+    }, [route]);
     return (
         <DrawerMaterial
             variant="permanent"
-            
+
             classes={{
                 paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
             }}
@@ -83,21 +90,27 @@ export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
             <Divider />
             <List>
                 <div>
-                    <ListItem button onClick={onGoDashboar}>
+                    <ListItem button onClick={onGoHome} selected={route === '/'}>
+                        <ListItemIcon>
+                            <HomeIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Inicio" />
+                    </ListItem>
+                    <ListItem button onClick={onGoDashboar} selected={route === '/dashboard'}>
                         <ListItemIcon>
                             <DashboardIcon />
                         </ListItemIcon>
                         <ListItemText primary="Dashboard" />
                     </ListItem>
-                    <ListItem button onClick={onGoOrders}>
+                    <ListItem button onClick={onGoOrders} selected={route === '/orders'}>
                         <ListItemIcon>
                             <ShoppingCartIcon />
                         </ListItemIcon>
                         <ListItemText primary="Orders" />
                     </ListItem>
-                    <ListItem button onClick={onGoReports}>
+                    <ListItem button onClick={onGoReports} selected={route === '/reports'}>
                         <ListItemIcon>
-                        <BarChartIcon />
+                            <BarChartIcon />
                         </ListItemIcon>
                         <ListItemText primary="Reports" />
                     </ListItem>
@@ -107,17 +120,8 @@ export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
                         </ListItemIcon>
                         <ListItemText primary="Mi Perfil" />
                     </ListItem>
-                 
-                    <ListItem button>
-                        <ListItemIcon>
-                            <LayersIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Integrations" />
-                    </ListItem>
                 </div>
             </List>
-            <Divider />
-            <List>{secondaryListItems}</List>
         </DrawerMaterial>
     )
 }

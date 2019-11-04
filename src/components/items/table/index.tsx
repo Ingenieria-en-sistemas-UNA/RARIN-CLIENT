@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useContext, useEffect } from 'react';
 import MaterialTable, { Column } from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
@@ -15,7 +15,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
+import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import { BlocsContext } from '../../../store/Context';
 const tableIcons = {
   Add: forwardRef<SVGSVGElement>((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef<SVGSVGElement>((props, ref) => <Check {...props} ref={ref} />),
@@ -39,10 +40,11 @@ const tableIcons = {
 
 
 interface Row {
+  id: number;
+  idPerson: string;
   name: string;
-  surname: string;
-  birthYear: number;
-  birthCity: number;
+  createdAt: string;
+  total: string;
 }
 
 interface TableState {
@@ -51,70 +53,54 @@ interface TableState {
 }
 
 export default function Table() {
+  const { voucherBloc } = useContext(BlocsContext);
   const [state, setState] = React.useState<TableState>({
     columns: [
-      { title: 'Name', field: 'name' },
-      { title: 'Surname', field: 'surname' },
-      { title: 'Birth Year', field: 'birthYear', type: 'numeric' },
-      {
-        title: 'Birth Place',
-        field: 'birthCity',
-        lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
-      },
+      { title: 'Numero Voucher', field: 'id', hidden: true },
+      { title: 'Nombre', field: 'name' },
+      { title: 'Cedula', field: 'idPerson' },
+      { title: 'Fecha', field: 'createdAt' },
+      { title: 'Total', field: 'total' },
     ],
-    data: [
-      { name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63 },
-      {
-        name: 'Zerya Betül',
-        surname: 'Baran',
-        birthYear: 2017,
-        birthCity: 34,
-      },
-    ],
+    data: [],
   });
+  useEffect(() => {
+    //voucherBloc.load();
+    voucherBloc.vouchersStream().subscribe((vouchers) => {
+      const data: Row[] = vouchers.map(({
+        id,
+        createdAt,
+        client: {
+          person: { idPerson, name }
+        },
+        items }) => {
+        let total = 0;
+        items.forEach(({ cant, product: { price } }) => total += cant * price)
+        return { id: (id as number), name, idPerson: idPerson, createdAt: createdAt + '', total: '$' + total }
+      })
+      setState({ ...state, data });
+    })
+  }, [])
 
   return (
     <MaterialTable
       icons={tableIcons}
-      title="Editable Example"
+      title="Compras"
       columns={state.columns}
       data={state.data}
-      editable={{
-        onRowAdd: (newData) =>
-          new Promise(resolve => {
-            setTimeout(() => {
-              resolve();
-              setState(prevState => {
-                const data = [...prevState.data];
-                data.push(newData);
-                return { ...prevState, data };
-              });
-            }, 600);
-          }),
-        onRowUpdate: (newData, oldData) =>
-          new Promise(resolve => {
-            setTimeout(() => {
-              resolve();
-              if (oldData) {
-                setState(prevState => {
-                  const data = [...prevState.data];
-                  data[data.indexOf(oldData)] = newData;
-                  return { ...prevState, data };
-                });
-              }
-            }, 600);
-          }),
-        onRowDelete: (oldData) =>
-          new Promise(resolve => {
-            setTimeout(() => {
-              resolve();
-              setState(prevState => {
-                const data = [...prevState.data];
-                data.splice(data.indexOf(oldData), 1);
-                return { ...prevState, data };
-              });
-            }, 600);
-          }),
+      actions={[
+        {
+          icon: () => <SaveAltIcon />,
+          tooltip: 'Download',
+          onClick: (event, rowData) => {
+              rowData = rowData as Row
+              window.open(`https://localhost:44351/api/pdfs/voucher/${rowData.id}`, '_blank');
+          }
+        }
+      ]}
+      options={{
+        actionsColumnIndex: -1,
+        exportButton: true
       }}
     />
   );

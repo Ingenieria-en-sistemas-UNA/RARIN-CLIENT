@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const HomePage: FC = () => {
-  localStorage.setItem('route', '/home');
+  localStorage.setItem('route', '/');
   const { authBloc, productBloc, categoryBloc } = useContext(BlocsContext);
   const classes = useStyles();
   useEffect(() => {

@@ -2,6 +2,7 @@ import { BaseProvider } from './BaseProvider';
 import { AuthProvider } from './AuthProvider';
 import { ResponseVoucher } from '../Models/Responses';
 import { Voucher } from '../Models/Voucher';
+import { ItemCarConvert } from '../Models/ItemCar';
 
 
 
@@ -29,10 +30,10 @@ export class VoucherProvider extends BaseProvider {
 
     create = async (voucher: Voucher): Promise<ResponseVoucher> => {
         try {
-            const response: Response = await fetch(`${this._baseUrlApi}/api/products`,
+            const response: Response = await fetch(`${this._baseUrlApi}/api/Vouchers`,
                 {
                     method: 'POST',
-                    body: JSON.stringify(voucher),
+                    body: JSON.stringify({ clientId: voucher.clientId, detail: voucher.detail, items: ItemCarConvert.ItemCarToJson(voucher.items) }),
                     headers: {
                         'Authorization': `Bearer ${this.provider.getToken()}`,
                         'Accept': 'application/json',

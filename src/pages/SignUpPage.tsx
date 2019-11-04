@@ -75,15 +75,15 @@ const SignUpPage: FC<FromProps> = ({ history }) => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [id, setId] = useState('');
+  const [idPerson, setIdPerson] = useState('');
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const sinErrors = { email, password, name, lastName, id };
+    const sinErrors = { email, password, name, lastName, idPerson };
     const result = validateLogin(sinErrors);
     if (!Object.keys(result).length) {
       try {
-        const client: Client = { person: { name, lastName, id: Number(id) } };
+        const client: Client = { person: { name, lastName, idPerson: idPerson } };
         const isLogged = await authBloc.signup(client, email, password);
         if (isLogged) {
           enqueueSnackbar('Se ha registrado exitosamente', { variant: 'success' })
@@ -153,14 +153,14 @@ const SignUpPage: FC<FromProps> = ({ history }) => {
                         required
                         fullWidth
                         id="id"
-                        helperText={errors.id ? errors.id : ""}
+                        helperText={errors.idPerson ? errors.idPerson : ""}
                         label="Identification"
                         name="id"
                         autoComplete="id"
                         autoFocus
-                        error={errors.id ? true : false}
-                        value={id}
-                        onChange={e => setId(e.target.value)}
+                        error={errors.idPerson ? true : false}
+                        value={idPerson}
+                        onChange={e => setIdPerson(e.target.value)}
                       />
                     </Grid>
                     <Grid item xs={12}>

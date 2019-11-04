@@ -18,6 +18,8 @@ import { StreamBuilder, Snapshot } from '../../../utils/BlocBuilder/index';
 import { ShoppingCar } from '../../../Models/ShoppingCar';
 import { ItemCar } from '../../../Models/ItemCar';
 import { ClientCarButtons } from '../card/ClientCarButtons';
+import { Voucher } from '../../../Models/Voucher';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,8 +40,10 @@ const Transition = React.forwardRef<unknown, TransitionProps>(function Transitio
 
 export const ShoppingCarDialog = ({ open, setOpen }: any) => {
   const classes = useStyles();
-  const { shoppingCarBloc } = useContext(BlocsContext);
+  const [errors, setErrors] = useState<any>({});
+  const { shoppingCarBloc, voucherBloc, authBloc } = useContext(BlocsContext);
 
+  const { enqueueSnackbar } = useSnackbar();
   const [added, setAdded] = useState(true);
   useEffect(() => {
     shoppingCarBloc.shoppingCartStream().subscribe((shopingCar) => setAdded(!added))
@@ -48,6 +52,21 @@ export const ShoppingCarDialog = ({ open, setOpen }: any) => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const onBuy = async () => {
+    try {
+      const voucher: Voucher = { client: authBloc.getClient(), clientId: authBloc.getClient().id as number, detail: 'Compra en linea', items: shoppingCarBloc.getItems() }
+      console.log(JSON.stringify(voucher));
+      const created = await voucherBloc.add(voucher);
+      if (created) {
+        enqueueSnackbar('Se completo la transacción', { variant: 'success' })
+      } else {
+        enqueueSnackbar('No se completo la transacción', { variant: 'error' });
+      }
+    } catch ({ message }) {
+      enqueueSnackbar('Algo ocurrio con la transacción', { variant: 'error' })
+    }
+  }
 
   return (
     <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -59,7 +78,7 @@ export const ShoppingCarDialog = ({ open, setOpen }: any) => {
           <Typography variant="h6" className={classes.title}>
             Carrito de Compras
             </Typography>
-          <Button autoFocus color="inherit" onClick={handleClose} style={{ color: 'white' }}>
+          <Button autoFocus color="inherit" onClick={onBuy} style={{ color: 'white' }}>
             Comprar
             </Button>
         </Toolbar>

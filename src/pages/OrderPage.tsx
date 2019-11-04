@@ -11,8 +11,9 @@ function Copyright() {
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © '}
             <Link color="inherit" href="https://material-ui.com/">
-                Your Website
-      </Link>{' '}
+                RARIN TECHNOLOGIES
+           </Link>
+            {' '}
             {new Date().getFullYear()}
             {'.'}
         </Typography>
@@ -23,7 +24,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     root: {
         display: 'flex',
     },
-    appBarSpacer: theme.mixins.toolbar,
     content: {
         flexGrow: 1,
         height: '90vh',
@@ -51,7 +51,6 @@ export default function Orders() {
     return (
         <div className={classes.root}>
             <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
                     <Table />
                 </Container>

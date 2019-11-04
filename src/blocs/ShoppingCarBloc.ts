@@ -14,7 +14,7 @@ export class ShoppingCarBloc {
     public errorsStream = () => this.errorsController.asObservable()
     public shoppingCartStream = () => this.shoppingCarController.asObservable()
 
-    public getShoppingCar = () => this.shoppingCarController.value;
+    public getItems = () => this.shoppingCarController.value.items;
 
     public addItem = (product: Product) => {
         const shoppingCar = this.shoppingCarController.value;

@@ -1,16 +1,5 @@
 import { BaseProvider } from './BaseProvider';
-import axios from 'axios'
 export class FileProvider extends BaseProvider {
-
-    private _uri = axios.create({
-        baseURL: this._baseUrlImages,
-        params: {
-            upload_preset: 'ka8bcl9d'
-        },
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
 
     public upload = async (file: File): Promise<string> => {
         try {

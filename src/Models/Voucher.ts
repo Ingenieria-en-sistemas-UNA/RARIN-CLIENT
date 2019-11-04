@@ -1,10 +1,13 @@
 import { Client } from './Client';
-import { Product } from './Product';
-export interface Voucher{
-    id : number;
-    client : Client;
-    products : Product[];
-    detail : string;
+import { ItemCar } from './ItemCar';
+
+export interface Voucher {
+    id?: number;
+    clientId: number;
+    client: Client;
+    items: ItemCar[];
+    detail: string;
+    createdAt?: Date;
 }
 
 export class VoucherConvert {

@@ -1,10 +1,8 @@
 import { Person } from './Person';
-import { ShoppingCar } from './ShoppingCar';
 import { Voucher } from './Voucher';
 export interface Client{
     id?: number;
     person: Person;
-    shoppingCard?: ShoppingCar;
     vouchers?: Voucher[]
 }
 
@@ -13,8 +11,8 @@ export class ClientConvert {
         return JSON.parse(json);
     }
 
-    public static ClientToJson(value: Client): string {
-        return JSON.stringify(value);
+    public static ClientToJson(value: Client): number {
+        return value.id as number;
     }
 
 }

@@ -3,28 +3,13 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import StarIcon from '@material-ui/icons/StarBorder';
 import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import { IconButton } from '@material-ui/core';
-
-function Copyright() {
-  return (
-    <Typography variant='body2' color='textSecondary' align='center'>
-
-      <Link color='inherit' href='https://material-ui.com/'>
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -68,38 +53,23 @@ const useStyles = makeStyles(theme => ({
 
 const tiers = [
   {
-    title: 'tarjeta de compras',
-
-    description: ['reporte de compras',],
-
-  },
-  {
     title: 'Categoría',
-
     description: [
       'reporte de categoría',
-
     ],
+    go: () => {
+      window.open(`https://localhost:44351/api/pdfs/categories`, '_blank');
+    }
 
   },
   {
     title: 'Cliente',
-
     description: [
       'reporte de cliente',
-
     ],
-
-
-  },
-  {
-    title: 'Usuario',
-
-    description: [
-      'reporte de usuario',
-
-    ],
-
+    go: () => {
+      window.open(`https://localhost:44351/api/pdfs/client`, '_blank');
+    }
 
   },
   {
@@ -107,10 +77,10 @@ const tiers = [
 
     description: [
       'reporte de facturas',
-
     ],
-
-
+    go: () => {
+      window.open(`https://localhost:44351/api/pdfs/voucher`, '_blank');
+    }
   },
 ];
 
@@ -156,10 +126,11 @@ export default function ReportsPage() {
                   </ul>
                 </CardContent>
                 <CardActions>
-                  <IconButton edge='start'
-                    color='secondary'
-                    arial-label='open drawer'
-                  >
+                    <IconButton edge='start'
+                      color='secondary'
+                      arial-label='open drawer'
+                      onClick={() => tier.go()}
+                    >
                     <AssignmentIcon />
                   </IconButton>
                 </CardActions>

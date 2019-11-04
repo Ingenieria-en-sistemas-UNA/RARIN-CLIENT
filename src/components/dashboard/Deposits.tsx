@@ -1,33 +1,39 @@
 /* eslint-disable no-script-url */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import Link from '@material-ui/core/Link';
-import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
-
-const useStyles = makeStyles({
-  depositContext: {
-    flex: 1,
-  },
-});
+import { BlocsContext } from '../../store/Context';
+import { StreamBuilder, Snapshot } from '../../utils/BlocBuilder/index';
+import { Voucher } from '../../Models/Voucher';
 
 export default function Deposits() {
-  const classes = useStyles();
+  const { voucherBloc } = useContext(BlocsContext);
+  //voucherBloc.load();
   return (
-    <React.Fragment>
-      <Title>Recent Deposits</Title>
-      <Typography component="p" variant="h4">
-        $3,024.00
-      </Typography>
-      <Typography color="textSecondary" className={classes.depositContext}>
-        on 15 March, 2019
-      </Typography>
-      <div>
-        <Link color="primary" href="javascript:;">
-          View balance
-        </Link>
-      </div>
-    </React.Fragment>
+    <>
+      <Title>Deposits</Title>
+      <StreamBuilder
+        stream={voucherBloc.vouchersStream()}
+        builder={(snapshot: Snapshot<Voucher[]>) => {
+          const vouchers = snapshot.data;
+          let total = 0.0;
+          if (vouchers) {
+            vouchers.forEach(voucher => {
+              voucher.items.forEach(item => {
+                total += item.cant * item.product.price;
+              });
+            })
+          }
+          return (
+            <Typography component="p" variant="h4">
+              ${total}
+            </Typography>
+          )
+
+        }}
+      />
+    </>
   );
 }

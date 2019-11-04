@@ -22,13 +22,13 @@ export const validatesSignUp = (values: any) => {
         errors.lastName = '- Este campo es obligatorio'
     }
 
-    if (!values.id) {
-        errors.id = '- Es Obligatorio usar una identificación'
+    if (!values.idPerson) {
+        errors.idPerson = '- Es Obligatorio usar una identificación'
     } else {
         try {
-            Number(values.id);
+            Number(values.idPerson);
         } catch (error) {
-            errors.id = " - Esta no es una identificación valida"
+            errors.idPerson = " - Esta no es una identificación valida"
         }
     }
 

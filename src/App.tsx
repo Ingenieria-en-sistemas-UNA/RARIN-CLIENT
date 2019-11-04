@@ -11,7 +11,7 @@ const history = createBrowserHistory();
 
 const App: FC = (props: any) => {
 
-  const { authBloc, categoryBloc, productBloc } = useContext(BlocsContext);
+  const { authBloc, categoryBloc, productBloc, voucherBloc } = useContext(BlocsContext);
   const { enqueueSnackbar } = useSnackbar();
 
   const addSnackbar = (message: string, variant: VariantType) => {
@@ -29,6 +29,7 @@ const App: FC = (props: any) => {
 
   useEffect(() => {
     load();
+    voucherBloc.load()
     authBloc.errorsStrem().subscribe(ErrorObserver(authBloc.cleanErrors));
     categoryBloc.errorsStrem().subscribe(ErrorObserver(categoryBloc.cleanErrors));
     productBloc.errorsStrem().subscribe(ErrorObserver(productBloc.cleanErrors));

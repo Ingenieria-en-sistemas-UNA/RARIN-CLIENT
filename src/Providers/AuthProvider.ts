@@ -16,7 +16,7 @@ export class AuthProvider extends BaseProvider {
                     'Content-Type': 'application/json'
                 },
                 method: 'POST',
-                body: JSON.stringify({ email, password, client: { ...client, shoppingCar: {} } })
+                body: JSON.stringify({ email, password, client: { ...client } })
             })
 
             if (response.status >= 200 && response.status < 300) {
