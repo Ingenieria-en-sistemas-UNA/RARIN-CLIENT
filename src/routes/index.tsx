@@ -9,6 +9,7 @@ import { History } from 'history';
 import SignUpPage from '../pages/SignUpPage';
 import Orders from '../pages/OrderPage';
 import Reports from '../pages/ReportsPage';
+import Profile from '../pages/ProfilePage';
 
 interface FromProps {
     sesionState: boolean,
@@ -22,6 +23,7 @@ export const AppRoutes: FC<FromProps> = ({ sesionState, history }) =>
             <PrivateRoute exact path="/dashboard" state={sesionState} component={Dashboard} />
             <PrivateRoute exact path="/orders" state={sesionState} component={Orders} />
             <PrivateRoute exact path="/reports" state={sesionState} component={Reports} />
+            <PrivateRoute exact path="/profile" state={sesionState} component={Profile} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={SignUpPage} />
 
