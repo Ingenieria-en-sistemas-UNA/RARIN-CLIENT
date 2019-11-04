@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect, useContext } from 'react'
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Drawer as DrawerMaterial, IconButton, Divider, List, ListItem, ListItemIcon } from '@material-ui/core';
 import PeopleIcon from '@material-ui/icons/People';
@@ -11,6 +11,8 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
 import { History } from 'history';
+import { BlocsContext } from '../../../store/Context';
+
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) => ({
@@ -56,6 +58,7 @@ interface FromProps {
 
 export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
     const classes = useStyles();
+    const { authBloc } = useContext(BlocsContext);
     const [route, setRoute] = useState(localStorage.getItem('route') || '/');
     const onGoHome = () => {
         setRoute('/');
@@ -108,12 +111,16 @@ export const Drawer: FC<FromProps> = ({ open, handleDrawer, history }) => {
                         </ListItemIcon>
                         <ListItemText primary="Orders" />
                     </ListItem>
-                    <ListItem button onClick={onGoReports} selected={route === '/reports'}>
-                        <ListItemIcon>
-                            <BarChartIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Reports" />
-                    </ListItem>
+                    {
+                        authBloc.isAdmin() && (
+                            <ListItem button onClick={onGoReports} selected={route === '/reports'}>
+                                <ListItemIcon>
+                                    <BarChartIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Reports" />
+                            </ListItem>
+                        )
+                    }
                     <ListItem button>
                         <ListItemIcon>
                             <PeopleIcon />
