@@ -1,110 +1,70 @@
-import React from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
-import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
+import React, { FC, useContext, useEffect } from 'react';
 import Card from '../components/items/card'
+import { Paper, Grid, CircularProgress } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { BlocsContext } from '../store/Context';
+import { StreamBuilder, Snapshot } from '../utils/BlocBuilder/index';
+import { Product } from '../Models/Product';
+import { CarButton } from '../components/items/home/CarButton';
+import { AdminButton } from '../components/items/home/AdminButton';
+import CategoryFilter from '../components/items/filters/CategoryFilter';
+import { SearchInput } from '../components/items/home/SearchInput';
 
-const cards = [1]
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-      width: 'auto',
-    },
-    title: {
-      flexGrow: 1,
-      display: 'none',
-      [theme.breakpoints.up('sm')]: {
-        display: 'block',
-      },
-    },
-    search: {
-      position: 'relative',
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.common.white, 0.15),
-      '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
-      },
-      marginLeft: 0,
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-      },
-    },
-    searchIcon: {
-      width: theme.spacing(7),
-      height: '100%',
-      position: 'absolute',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    inputRoot: {
-      color: 'inherit',
-    },
-    inputInput: {
-      padding: theme.spacing(1, 1, 1, 7),
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: 120,
-        '&:focus': {
-          width: 200,
-        },
-      },
-    },
-  }),
-);
+const useStyles = makeStyles(theme => ({
+  root: {
+    top: theme.spacing(10),
+    padding: theme.spacing(2),
+    backgroundColor: '#536DFE',
+    width: '100%',
+    height: 70,
+    margin: '0px 20px 0px 20px'
+  },
+  progress: {
+    margin: theme.spacing(10),
+  },
+}));
 
-const HomePage = () => {
-  
+const HomePage: FC = () => {
+  localStorage.setItem('route', '/');
+  const { authBloc, productBloc, categoryBloc } = useContext(BlocsContext);
   const classes = useStyles();
-
+  useEffect(() => {
+    categoryBloc.load();
+    productBloc.load();
+  })
   return (
-    <div className={classes.root}>
-      <AppBar position="absolute">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
-            RARIN TECHNOLOGIES
-          </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Buscar…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div>
-        </Toolbar>
-      </AppBar>
-
+    <Grid container spacing={3}>
+      <Paper className={classes.root}>
+        <Grid container justify='flex-end' direction='row' wrap='wrap'>
+          <CategoryFilter />
+          <SearchInput />
+        </Grid>
+      </Paper>
+      <Grid container justify='space-around' direction='row' wrap='wrap' style={{ display: 'flex', alignItems: 'flex-start', padding: 20 }}>
+        <StreamBuilder
+          stream={productBloc.productStrem()}
+          builder={(snapshot: Snapshot<Product[]>) => {
+            let products: Product[] = snapshot.data || []
+            if (!snapshot.hasData) {
+              return <CircularProgress variant="indeterminate" className={classes.progress} />
+            }
+            return products.length > 0 ? (
+              products.map((product: Product, index: number) => <Card key={index} product={product} />)
+            ) : (
+                <p>No hay productos</p>
+              )
+          }}
+        />
+      </Grid>
       {
-        cards.map((value: number, index: number) => <Card key={index} />)
+        authBloc.isAdmin() ? (
+          <AdminButton />
+        ) : (
+            <CarButton />
+          )
+
       }
-    </div>
+    </Grid>
   );
 }
 
